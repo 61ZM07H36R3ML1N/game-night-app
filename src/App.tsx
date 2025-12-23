@@ -80,12 +80,19 @@ const GameNightApp = () => {
     <div className="p-6 min-h-[400px]">
 
       {/* Menu View */}
+      {activeTab === 'menu' && (
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          {menuItems.map((item) => (
+            <div key ={item.id} className=
+          ))}
+        </div>
+      )}
       
     </div>
         
     </div>
       </div>
-    </div>
+    
   )
 
 }
