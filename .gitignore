@@ -25,3 +25,8 @@ dist-ssr
 .history
 *.local
 .env
+.env.*.local
+.env.local
+dist/
+firebase-debug.log
+firebase-debug.*.log

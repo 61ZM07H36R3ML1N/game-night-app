@@ -1,0 +1,67 @@
+mutation CreateGameNight($name: String!, $description: String, $eventDate: Date!, $eventTime: String, $isFinalized: Boolean) @auth(level: USER) {
+  gameNight_insert(data: {
+    name: $name,
+    description: $description,
+    eventDate: $eventDate,
+    eventTime: $eventTime,
+    isFinalized: $isFinalized,
+    creatorId_expr: "auth.uid"
+  })
+}
+
+query ListUpcomingGameNights @auth(level: USER) {
+  gameNights(where: {eventDate: {gt_date: {today: true}}}) {
+    id
+    name
+    eventDate
+    eventTime
+    description
+  }
+}
+
+mutation InviteToGameNight($gameNightId: UUID!, $inviteeId: UUID!) @auth(level: USER) {
+  gameNightInvitation_insert(data: {
+    gameNightId: $gameNightId,
+    inviteeId: $inviteeId
+  })
+}
+
+query GetGameNightDetails($gameNightId: UUID!) @auth(level: USER) {
+  gameNight(id: $gameNightId) {
+    id
+    name
+    description
+    eventDate
+    eventTime
+    isFinalized
+    creator {
+      id
+      displayName
+    }
+    gameNightInvitations_on_gameNight {
+      invitee {
+        id
+        displayName
+      }
+      status
+    }
+    gameNightProposals_on_gameNight {
+      id
+      type
+      game {
+        id
+        title
+      }
+      foodItem {
+        id
+        name
+      }
+      votes_on_gameNightProposal {
+        user {
+          id
+          displayName
+        }
+      }
+    }
+  }
+}

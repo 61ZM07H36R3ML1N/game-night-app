@@ -1,0 +1,50 @@
+mutation CreateDemoData @auth(level: PUBLIC, insecureReason: "This mutation is safe to expose to the public for demo purposes.") @transaction {
+  user_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      displayName: "demouser1",
+      createdAt: "2024-04-05T00:00:00Z",
+      email: "demouser1@example.com",
+      photoUrl: "https://example.com/demouser1.jpg"
+    },
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      displayName: "demouser2",
+      createdAt: "2024-04-05T00:00:00Z",
+      email: "demouser2@example.com",
+      photoUrl: "https://example.com/demouser2.jpg"
+    }
+  ])
+  game_insertMany(data: [
+    {
+      id: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      title: "Carcassonne",
+      createdAt: "2024-04-05T00:00:00Z",
+      description: "Tile-laying game",
+      minPlayers: 2,
+      maxPlayers: 5
+    },
+    {
+      id: "bcdefa12-3456-7890-abcd-ef1234567890",
+      title: "Ticket to Ride",
+      createdAt: "2024-04-05T00:00:00Z",
+      description: "Train route building game",
+      minPlayers: 2,
+      maxPlayers: 5
+    }
+  ])
+  foodItem_insertMany(data: [
+    {
+      id: "11223344-5566-7788-9900-aabbccddeeff",
+      name: "Pizza",
+      createdAt: "2024-04-05T00:00:00Z",
+      description: "Delicious pizza"
+    },
+    {
+      id: "ffeeeedd-ccbbaa99-8877-6655-4433221100",
+      name: "Tacos",
+      createdAt: "2024-04-05T00:00:00Z",
+      description: "Tasty tacos"
+    }
+  ])
+}

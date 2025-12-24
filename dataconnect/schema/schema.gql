@@ -1,0 +1,52 @@
+type User @table {
+  displayName: String!
+  email: String
+  photoUrl: String
+  createdAt: Timestamp!
+}
+
+type GameNight @table {
+  name: String!
+  description: String
+  eventDate: Date!
+  eventTime: String # Consider using a specific time type if available, otherwise String is fine.
+  isFinalized: Boolean
+  createdAt: Timestamp!
+  creator: User!
+}
+
+type Game @table {
+  title: String!
+  minPlayers: Int
+  maxPlayers: Int
+  description: String
+  createdAt: Timestamp!
+}
+
+type FoodItem @table {
+  name: String!
+  description: String
+  createdAt: Timestamp!
+}
+
+type GameNightProposal @table {
+  type: String! # Using String for enum type, as enums are not supported. Could be 'GAME' or 'FOOD'.
+  createdAt: Timestamp!
+  game: Game
+  foodItem: FoodItem
+  gameNight: GameNight!
+  proposer: User!
+}
+
+type Vote @table {
+  createdAt: Timestamp!
+  gameNightProposal: GameNightProposal!
+  user: User!
+}
+
+type GameNightInvitation @table(key: ["gameNight", "invitee"]) {
+  gameNight: GameNight!
+  invitee: User!
+  status: String # e.g., 'PENDING', 'ACCEPTED', 'DECLINED'
+  createdAt: Timestamp!
+}
