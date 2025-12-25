@@ -1,51 +1,251 @@
+CSS
 /* src/App.css */
 
-/* 1. Global Reset: Makes sizing math easier */
+/* Global Reset */
 * {
   box-sizing: border-box;
 }
 
+/* 1. The "Frame" (Your Browser Window) */
 body {
   margin: 0;
+  background-color: #1e293b; /* Dark Slate background */
+  color: #f1f5f9;            /* Light Text */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f0f2f5; /* Light grey background */
-  color: #333;
+
+  /* This centers the phone app in the middle of the screen */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-/* 2. The Main Container: This handles your Padding logic */
+/* 2. The "Phone" (The App Itself) */
 .app-container {
-  max-width: 600px;       /* Don't let it get too wide on desktop */
-  margin: 0 auto;         /* Center the box on the screen */
-  padding: 20px;          /* 20px of breathing room on all sides */
-  background-color: white;
-  min-height: 100vh;      /* Full height */
-  box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  width: 100%;
+  max-width: 600px;          /* Wider: Looks better on desktop, still fits phone */
+  min-height: 500px;         /* Starts with a good size */
+  max-height: 90vh;          /* Won't go off the screen */
+  
+  background-color: #0f172a; 
+  border-radius: 20px;       /* Slightly softer corners */
+  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8); 
+  border: 1px solid #334155;
+  overflow: hidden;
+  
+  display: flex;
+  flex-direction: column;
+  
+  /* Smooth transition if window resizes */
+  transition: all 0.3s ease;
 }
 
-/* 3. Header Styling */
-h1 {
+/* 3. Header */
+.app-header {
+  background-color: #4f46e5; /* Indigo */
+  padding: 20px;
   text-align: center;
-  color: #2c3e50;
-  margin-bottom: 30px;
+  /* Prevent header from shrinking */
+  flex-shrink: 0; 
+}
+.app-header h1 { margin: 0; font-size: 1.5rem; }
+.app-header p { margin: 5px 0 0; opacity: 0.8; font-size: 0.9rem; }
+
+/* 4. Navigation Tabs */
+.tabs {
+  display: flex;
+  background-color: #1e293b;
+  border-bottom: 1px solid #334155;
+  flex-shrink: 0; /* Keep tabs fixed */
 }
 
-/* 4. Button Styling (Make them look tappable) */
-button {
-  display: block;
-  width: 100%;            /* Full width buttons are easier to tap on phones */
+.tab-btn {
+  flex: 1;
   padding: 15px;
-  margin-bottom: 10px;    /* Space between buttons */
-  background-color: #007bff;
-  color: white;
+  background: none;
   border: none;
-  border-radius: 8px;     /* Rounded corners */
-  font-size: 16px;
+  color: #94a3b8;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
 }
 
-button:active {
-  background-color: #0056b3; /* Darker blue when clicked */
-  transform: scale(0.98);    /* Tiny shrink effect */
+.tab-btn.active {
+  color: #818cf8; /* Light Indigo */
+  border-bottom-color: #818cf8;
+  background-color: #1e293b;
+}
+
+/* 5. Scrollable Content Area */
+.content-area {
+  padding: 20px;
+  flex: 1;           /* Take up all remaining space */
+  overflow-y: auto;  /* ENABLE SCROLLING HERE */
+  
+  /* Custom Scrollbar for Chrome/Safari/Edge */
+  scrollbar-width: thin;
+  scrollbar-color: #475569 #0f172a;
+}
+
+/* Custom Scrollbar Styling */
+.content-area::-webkit-scrollbar {
+  width: 6px;
+}
+.content-area::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+.content-area::-webkit-scrollbar-thumb {
+  background-color: #475569;
+  border-radius: 20px;
+}
+
+/* Cards (Menu and Games) */
+.card {
+  background-color: #334155;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #475569;
+  transition: transform 0.1s;
+}
+.card:active {
+  transform: scale(0.99);
+}
+
+.card-info h3 { margin: 0 0 5px; font-size: 1.1rem; }
+.card-info p { margin: 5px 0 0; color: #cbd5e1; font-size: 0.85rem; }
+
+.badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  background: #0f172a;
+  padding: 3px 8px;
+  border-radius: 12px;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+/* Vote Buttons */
+.vote-btn {
+  background-color: #1e293b;
+  border: 1px solid #475569;
+  color: white;
+  min-width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 12px;
+  transition: background 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.9rem;
+}
+.vote-btn:hover { background-color: #475569; }
+
+/* Input Form */
+/* Input Form */
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  position: sticky;
+  top: 0;                  /* Stick to the very top */
+  background-color: #0f172a; /* Match background to hide scroll content behind it */
+  padding: 15px 0;         /* More breathing room */
+  z-index: 10;
+  border-bottom: 1px solid #1e293b; /* Subtle line to separate from list */
+}
+
+.input-group input {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #475569;
+  background-color: #1e293b;
+  color: white;
+  font-size: 1rem;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); /* Inner shadow for depth */
+}
+
+.input-group input::placeholder {
+  color: #64748b; /* Lighter placeholder text */
+}
+
+/* Seed Button */
+.seed-btn {
+  width: 100%;
+  padding: 24px;
+  background: none;
+  border: 2px dashed #475569;
+  color: #94a3b8;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+.seed-btn:hover {
+  border-color: #818cf8;
+  color: #818cf8;
+  background-color: rgba(129, 140, 248, 0.05);
+}
+/* ... existing code ... */
+
+/* LOGIN SCREEN */
+.login-screen {
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.login-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.login-input {
+  width: 100%;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #475569;
+  background-color: #1e293b;
+  color: white;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.join-btn {
+  width: 100%;
+  padding: 15px;
+  background-color: #10b981; /* Emerald Green */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+.join-btn:hover { background-color: #059669; }
+
+/* CATEGORY SELECTOR (For Menu) */
+.category-select {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #475569;
+  background-color: #1e293b;
+  color: white;
+  cursor: pointer;
 }
