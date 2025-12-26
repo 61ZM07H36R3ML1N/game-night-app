@@ -219,7 +219,7 @@ const GameNightApp = () => {
       </div>
 
       {/* Tabs */}
-      <div className="tabs">
+      <div className="tabs" style={{ padding: '0 16px'}}>
         <button className={`tab-btn ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>🍕 Menu</button>
         <button className={`tab-btn ${activeTab === 'games' ? 'active' : ''}`} onClick={() => setActiveTab('games')}>🎮 Games</button>
         <button className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>💬 Chat</button>
