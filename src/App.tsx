@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css'; 
 import { db } from './firebase'; 
 import { collection, onSnapshot, addDoc, doc, updateDoc, query, orderBy } from 'firebase/firestore';
-import { Plus, LogOut, MessageCircle, Send } from 'lucide-react';
+import { LogOut, MessageCircle, Send } from 'lucide-react';
 
 // Default data
 const SEED_MENU = [
@@ -13,24 +13,52 @@ const SEED_MENU = [
 
 const GameNightApp = () => {
   // --- STATE ---
-  const [user, setUser] = useState<string>(''); // OPTION 2: Identity State
+  const [user, setUser] = useState<string>(''); 
   const [tempName, setTempName] = useState('');
   
   const [activeTab, setActiveTab] = useState('menu');
-  const [menuItems, setMenuItems] = useState<any[]>([]);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Chat State
+  // Data Collections
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
+
+  // Inputs
+  const [newSuggestion, setNewSuggestion] = useState('');
+  const [newMenuItem, setNewMenuItem] = useState(''); 
+  const [menuCategory, setMenuCategory] = useState('Food');
   const [newMessage, setNewMessage] = useState('');
 
-  // ... inside useEffect ...
-    // New Chat Listener
-    const chatQuery = query(collection(db, 'chat'), orderBy('createdAt', 'asc'));
+  // Auto-scroll ref for chat
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // --- 1. SETUP & LISTENERS ---
+  useEffect(() => {
+    // Check local storage for identity
+    const savedName = localStorage.getItem('gameNightUser');
+    if (savedName) setUser(savedName);
+
+    // A. Menu Listener
+    const menuQuery = query(collection(db, 'menu'), orderBy('votes', 'desc'));
+    const unsubscribeMenu = onSnapshot(menuQuery, (snapshot) => {
+      const menuData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMenuItems(menuData);
+    });
+
+    // B. Games Listener
+    const gamesQuery = query(collection(db, 'games'), orderBy('votes', 'desc'));
+    const unsubscribeGames = onSnapshot(gamesQuery, (snapshot) => {
+      const gameData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setSuggestions(gameData);
+      setLoading(false);
+    });
+
+    // C. Chat Listener (New!)
+    const chatQuery = query(collection(db, 'messages'), orderBy('createdAt', 'asc'));
     const unsubscribeChat = onSnapshot(chatQuery, (snapshot) => {
-      const chatData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setMessages(chatData);
+      const msgData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMessages(msgData);
     });
 
     return () => {
@@ -40,77 +68,46 @@ const GameNightApp = () => {
     };
   }, []);
 
-  // Inputs
-  const [newSuggestion, setNewSuggestion] = useState('');
-  const [newMenuItem, setNewMenuItem] = useState(''); // OPTION 3: Menu Input
-  const [menuCategory, setMenuCategory] = useState('Food');
-
-  // --- 1. SETUP & LISTENERS ---
+  // Auto-scroll to bottom whenever messages change
   useEffect(() => {
-    // Check if user is already logged in (saved in phone storage)
-    const savedName = localStorage.getItem('gameNightUser');
-    if (savedName) setUser(savedName);
-
-    // Menu Listener
-    const menuQuery = query(collection(db, 'menu'), orderBy('votes', 'desc'));
-    const unsubscribeMenu = onSnapshot(menuQuery, (snapshot) => {
-      const menuData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setMenuItems(menuData);
-    });
-
-    // Games Listener
-    const gamesQuery = query(collection(db, 'games'), orderBy('votes', 'desc'));
-    const unsubscribeGames = onSnapshot(gamesQuery, (snapshot) => {
-      const gameData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSuggestions(gameData);
-      setLoading(false);
-    });
-
-    return () => {
-      unsubscribeMenu();
-      unsubscribeGames();
-    };
-  }, []);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, activeTab]);
 
   // --- 2. ACTIONS ---
   
-  // Login Action
+  // Login / Logout
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!tempName.trim()) return;
-    localStorage.setItem('gameNightUser', tempName); // Save to phone
+    localStorage.setItem('gameNightUser', tempName); 
     setUser(tempName);
   };
 
-  // Logout Action
   const handleLogout = () => {
-    localStorage.removeItem('gameNightUser'); // Wipe from phone memory
-    setUser(''); // Reset state to trigger Login Screen
+    localStorage.removeItem('gameNightUser'); 
+    setUser(''); 
   };
 
-  // Vote Action
-
+  // Voting
   const handleVote = async (collectionName: string, id: string, currentVotes: number) => {
-    // We could eventually check if this user already voted here!
-    console.log(`${user} voted in ${collectionName}`); 
     const itemRef = doc(db, collectionName, id);
     await updateDoc(itemRef, { votes: currentVotes + 1 });
   };
 
-  // Add Game (Option 3 Logic)
+  // Add Game
   const handleAddSuggestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSuggestion.trim()) return;
     await addDoc(collection(db, 'games'), {
       title: newSuggestion,
       votes: 1,
-      suggestedBy: user, // Tag the user!
+      suggestedBy: user,
       createdAt: Date.now()
     });
     setNewSuggestion('');
   };
 
-  // Add Menu Item (Option 3 Logic)
+  // Add Menu Item
   const handleAddMenuItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMenuItem.trim()) return;
@@ -124,6 +121,20 @@ const GameNightApp = () => {
     setNewMenuItem('');
   };
 
+  // Send Message (New!)
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    await addDoc(collection(db, 'messages'), {
+      text: newMessage,
+      sender: user,
+      createdAt: Date.now()
+    });
+    setNewMessage('');
+  };
+
+  // Seed Data
   const seedMenu = async () => {
     SEED_MENU.forEach(async (item) => {
       await addDoc(collection(db, 'menu'), item);
@@ -132,18 +143,15 @@ const GameNightApp = () => {
 
   // --- 3. RENDER ---
 
-  // OPTION 2: If no user, show Login Screen with Header
+  // LOGIN SCREEN
   if (!user) {
     return (
       <div className="app-container">
-        
-        {/* 1. Header is BACK now */}
         <div className="app-header">
           <h1>🎲 Game Night</h1>
           <p>Live Voting App</p>
         </div>
 
-        {/* 2. Login Form (Centered in remaining space) */}
         <div className="login-screen">
           <div className="login-content">
             <span className="login-icon">👋</span>
@@ -167,7 +175,7 @@ const GameNightApp = () => {
     );
   }
 
-  // If user exists, show Main App
+  // MAIN APP
   return (
     <div className="app-container">
       
@@ -183,7 +191,7 @@ const GameNightApp = () => {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Navigation Tabs */}
       <div className="tabs">
         <button 
           className={`tab-btn ${activeTab === 'menu' ? 'active' : ''}`} 
@@ -197,16 +205,21 @@ const GameNightApp = () => {
         >
           🎮 Games
         </button>
+        <button 
+          className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`} 
+          onClick={() => setActiveTab('chat')}
+        >
+          💬 Chat
+        </button>
       </div>
 
-      {/* Content */}
+      {/* Main Content */}
       <div className="content-area">
         {loading && <p className="loading">Loading data...</p>}
 
-        {/* MENU VIEW (Updated for Option 3) */}
+        {/* MENU VIEW */}
         {!loading && activeTab === 'menu' && (
           <div className="list-container">
-            {/* NEW MENU FORM */}
             <form onSubmit={handleAddMenuItem} className="input-group">
               <input 
                 type="text" 
@@ -279,6 +292,45 @@ const GameNightApp = () => {
             ))}
           </div>
         )}
+
+        {/* CHAT VIEW (NEW) */}
+        {!loading && activeTab === 'chat' && (
+          <>
+            <div className="chat-container">
+              {messages.length === 0 && (
+                <div style={{ textAlign: 'center', opacity: 0.5, marginTop: '50px' }}>
+                  <MessageCircle size={48} style={{ margin: '0 auto 10px', display: 'block' }} />
+                  <p>No messages yet. Start the chat!</p>
+                </div>
+              )}
+              
+              {messages.map((msg) => {
+                const isMe = msg.sender === user;
+                return (
+                  <div key={msg.id} className={`message-bubble ${isMe ? 'message-mine' : 'message-other'}`}>
+                    {!isMe && <span className="message-sender">{msg.sender}</span>}
+                    {msg.text}
+                  </div>
+                );
+              })}
+              {/* Invisible element to trigger auto-scroll */}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <form onSubmit={handleSendMessage} className="chat-input-area">
+              <input 
+                type="text" 
+                value={newMessage} 
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message..." 
+              />
+              <button type="submit" className="send-btn">
+                <Send size={20} />
+              </button>
+            </form>
+          </>
+        )}
+
       </div>
     </div>
   );
