@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css'; 
 import { db } from './firebase'; 
-import { collection, onSnapshot, addDoc, doc, updateDoc, query, orderBy } from 'firebase/firestore';
-import { LogOut, MessageCircle, Send } from 'lucide-react';
+import { collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, getDocs, query, orderBy } from 'firebase/firestore';
+import { LogOut, MessageCircle, Send, Swords } from 'lucide-react';
 
 // Default data
 const SEED_MENU = [
@@ -30,12 +30,11 @@ const GameNightApp = () => {
   const [menuCategory, setMenuCategory] = useState('Food');
   const [newMessage, setNewMessage] = useState('');
 
-  // Auto-scroll ref for chat
+  // Auto-scroll ref
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // --- 1. SETUP & LISTENERS ---
   useEffect(() => {
-    // Check local storage for identity
     const savedName = localStorage.getItem('gameNightUser');
     if (savedName) setUser(savedName);
 
@@ -54,7 +53,7 @@ const GameNightApp = () => {
       setLoading(false);
     });
 
-    // C. Chat Listener (New!)
+    // C. Chat Listener
     const chatQuery = query(collection(db, 'messages'), orderBy('createdAt', 'asc'));
     const unsubscribeChat = onSnapshot(chatQuery, (snapshot) => {
       const msgData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -68,14 +67,12 @@ const GameNightApp = () => {
     };
   }, []);
 
-  // Auto-scroll to bottom whenever messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, activeTab]);
 
   // --- 2. ACTIONS ---
   
-  // Login / Logout
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!tempName.trim()) return;
@@ -88,13 +85,11 @@ const GameNightApp = () => {
     setUser(''); 
   };
 
-  // Voting
   const handleVote = async (collectionName: string, id: string, currentVotes: number) => {
     const itemRef = doc(db, collectionName, id);
     await updateDoc(itemRef, { votes: currentVotes + 1 });
   };
 
-  // Add Game
   const handleAddSuggestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSuggestion.trim()) return;
@@ -107,7 +102,6 @@ const GameNightApp = () => {
     setNewSuggestion('');
   };
 
-  // Add Menu Item
   const handleAddMenuItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMenuItem.trim()) return;
@@ -121,11 +115,9 @@ const GameNightApp = () => {
     setNewMenuItem('');
   };
 
-  // Send Message (New!)
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-
     await addDoc(collection(db, 'messages'), {
       text: newMessage,
       sender: user,
@@ -134,16 +126,54 @@ const GameNightApp = () => {
     setNewMessage('');
   };
 
-  // Seed Data
   const seedMenu = async () => {
     SEED_MENU.forEach(async (item) => {
       await addDoc(collection(db, 'menu'), item);
     });
   };
 
+  // --- NEW: THE RUNOFF FUNCTION ---
+  const handleRunoff = async () => {
+    // 1. Identify which list we are looking at
+    const collectionName = activeTab; // 'menu' or 'games'
+    if (collectionName === 'chat') return;
+
+    if (!window.confirm("⚠️ Are you sure? This will DELETE all items except the Top 3 and reset votes to 0.")) return;
+
+    // 2. Get all items sorted by votes
+    const q = query(collection(db, collectionName), orderBy('votes', 'desc'));
+    const snapshot = await getDocs(q);
+    const docs = snapshot.docs;
+
+    if (docs.length <= 3) {
+      alert("Need more than 3 items to run a runoff!");
+      return;
+    }
+
+    // 3. Pick the winners (Top 3)
+    const top3Ids = docs.slice(0, 3).map(d => d.id);
+
+    // 4. Execute the Purge
+    docs.forEach(async (item) => {
+      if (top3Ids.includes(item.id)) {
+        // Winner: Keep it, but reset votes
+        await updateDoc(doc(db, collectionName, item.id), { votes: 0 });
+      } else {
+        // Loser: Delete it
+        await deleteDoc(doc(db, collectionName, item.id));
+      }
+    });
+
+    // 5. Announce it in chat automatically (Optional Polish)
+    await addDoc(collection(db, 'messages'), {
+      text: `⚔️ A Runoff has started for ${collectionName.toUpperCase()}! Only the Top 3 remain. Vote again!`,
+      sender: "System",
+      createdAt: Date.now()
+    });
+  };
+
   // --- 3. RENDER ---
 
-  // LOGIN SCREEN
   if (!user) {
     return (
       <div className="app-container">
@@ -151,13 +181,11 @@ const GameNightApp = () => {
           <h1>🎲 Game Night</h1>
           <p>Live Voting App</p>
         </div>
-
         <div className="login-screen">
           <div className="login-content">
             <span className="login-icon">👋</span>
             <h2>Welcome!</h2>
             <p className="login-hint">Who is joining the party?</p>
-            
             <form onSubmit={handleJoin} className="login-form">
               <input 
                 className="login-input"
@@ -175,7 +203,6 @@ const GameNightApp = () => {
     );
   }
 
-  // MAIN APP
   return (
     <div className="app-container">
       
@@ -191,29 +218,14 @@ const GameNightApp = () => {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
+      {/* Tabs */}
       <div className="tabs">
-        <button 
-          className={`tab-btn ${activeTab === 'menu' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('menu')}
-        >
-          🍕 Menu
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'games' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('games')}
-        >
-          🎮 Games
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('chat')}
-        >
-          💬 Chat
-        </button>
+        <button className={`tab-btn ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>🍕 Menu</button>
+        <button className={`tab-btn ${activeTab === 'games' ? 'active' : ''}`} onClick={() => setActiveTab('games')}>🎮 Games</button>
+        <button className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>💬 Chat</button>
       </div>
 
-      {/* Main Content */}
+      {/* Content */}
       <div className="content-area">
         {loading && <p className="loading">Loading data...</p>}
 
@@ -221,17 +233,8 @@ const GameNightApp = () => {
         {!loading && activeTab === 'menu' && (
           <div className="list-container">
             <form onSubmit={handleAddMenuItem} className="input-group">
-              <input 
-                type="text" 
-                value={newMenuItem}
-                onChange={(e) => setNewMenuItem(e.target.value)}
-                placeholder="Suggest food..."
-              />
-              <select 
-                className="category-select"
-                value={menuCategory}
-                onChange={(e) => setMenuCategory(e.target.value)}
-              >
+              <input type="text" value={newMenuItem} onChange={(e) => setNewMenuItem(e.target.value)} placeholder="Suggest food..." />
+              <select className="category-select" value={menuCategory} onChange={(e) => setMenuCategory(e.target.value)}>
                 <option value="Food">Food</option>
                 <option value="Drink">Drink</option>
                 <option value="Snack">Snack</option>
@@ -239,25 +242,27 @@ const GameNightApp = () => {
               <button type="submit">+</button>
             </form>
 
-            {menuItems.length === 0 ? (
-              <button onClick={seedMenu} className="seed-btn">Load Default Menu</button>
-            ) : (
-              menuItems.map((item) => (
-                <div key={item.id} className="card menu-card">
-                  <div className="card-info">
-                    <h3>{item.name}</h3>
-                    <span className="badge">{item.category}</span>
-                    <p>{item.description}</p>
-                  </div>
-                  <button 
-                    className="vote-btn"
-                    onClick={() => handleVote('menu', item.id, item.votes)}
-                  >
-                    👍 {item.votes}
-                  </button>
+            {menuItems.map((item) => (
+              <div key={item.id} className="card menu-card">
+                <div className="card-info">
+                  <h3>{item.name}</h3>
+                  <span className="badge">{item.category}</span>
+                  <p>{item.description}</p>
                 </div>
-              ))
+                <button className="vote-btn" onClick={() => handleVote('menu', item.id, item.votes)}>
+                  👍 {item.votes}
+                </button>
+              </div>
+            ))}
+            
+            {/* Runoff Button (Only shows if there are more than 3 items) */}
+            {menuItems.length > 3 && (
+              <button className="runoff-btn" onClick={handleRunoff}>
+                <Swords size={18} /> Runoff (Top 3)
+              </button>
             )}
+            
+            {menuItems.length === 0 && <button onClick={seedMenu} className="seed-btn">Load Default Menu</button>}
           </div>
         )}
 
@@ -265,12 +270,7 @@ const GameNightApp = () => {
         {!loading && activeTab === 'games' && (
           <div className="list-container">
             <form onSubmit={handleAddSuggestion} className="input-group">
-              <input 
-                type="text" 
-                value={newSuggestion}
-                onChange={(e) => setNewSuggestion(e.target.value)}
-                placeholder="Suggest a game..."
-              />
+              <input type="text" value={newSuggestion} onChange={(e) => setNewSuggestion(e.target.value)} placeholder="Suggest a game..." />
               <button type="submit">+</button>
             </form>
 
@@ -278,22 +278,24 @@ const GameNightApp = () => {
               <div key={game.id} className="card game-card">
                 <div className="card-info">
                   <span className="game-title" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{game.title}</span>
-                  {game.suggestedBy && (
-                    <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>By: {game.suggestedBy}</p>
-                  )}
+                  {game.suggestedBy && <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>By: {game.suggestedBy}</p>}
                 </div>
-                <button 
-                  className="vote-btn"
-                  onClick={() => handleVote('games', game.id, game.votes)}
-                >
+                <button className="vote-btn" onClick={() => handleVote('games', game.id, game.votes)}>
                   👍 {game.votes}
                 </button>
               </div>
             ))}
+
+            {/* Runoff Button (Only shows if there are more than 3 items) */}
+            {suggestions.length > 3 && (
+              <button className="runoff-btn" onClick={handleRunoff}>
+                <Swords size={18} /> Runoff (Top 3)
+              </button>
+            )}
           </div>
         )}
 
-        {/* CHAT VIEW (NEW) */}
+        {/* CHAT VIEW */}
         {!loading && activeTab === 'chat' && (
           <>
             <div className="chat-container">
@@ -306,6 +308,17 @@ const GameNightApp = () => {
               
               {messages.map((msg) => {
                 const isMe = msg.sender === user;
+                // Special style for System messages
+                const isSystem = msg.sender === 'System';
+                
+                if (isSystem) {
+                  return (
+                    <div key={msg.id} style={{ textAlign: 'center', margin: '15px 0', opacity: 0.8, fontSize: '0.85rem', color: '#fbbf24' }}>
+                      {msg.text}
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={msg.id} className={`message-bubble ${isMe ? 'message-mine' : 'message-other'}`}>
                     {!isMe && <span className="message-sender">{msg.sender}</span>}
@@ -313,24 +326,15 @@ const GameNightApp = () => {
                   </div>
                 );
               })}
-              {/* Invisible element to trigger auto-scroll */}
               <div ref={messagesEndRef} />
             </div>
 
             <form onSubmit={handleSendMessage} className="chat-input-area">
-              <input 
-                type="text" 
-                value={newMessage} 
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..." 
-              />
-              <button type="submit" className="send-btn">
-                <Send size={20} />
-              </button>
+              <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." />
+              <button type="submit" className="send-btn"><Send size={20} /></button>
             </form>
           </>
         )}
-
       </div>
     </div>
   );
