@@ -400,3 +400,30 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+/* Runoff Button */
+.runoff-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #7c3aed; /* Violet */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  transition: transform 0.2s;
+}
+
+.runoff-btn:hover {
+  background-color: #6d28d9;
+  transform: translateY(-2px);
+}
+.runoff-btn:active {
+  transform: scale(0.98);
+}
