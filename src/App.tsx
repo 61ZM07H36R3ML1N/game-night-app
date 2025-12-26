@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css'; 
 import { db } from './firebase'; 
 import { collection, onSnapshot, addDoc, doc, updateDoc, query, orderBy } from 'firebase/firestore';
+import { Plus, LogOut } from 'lucide-react';
 
 // Default data
 const SEED_MENU = [
@@ -61,6 +62,14 @@ const GameNightApp = () => {
     localStorage.setItem('gameNightUser', tempName); // Save to phone
     setUser(tempName);
   };
+
+  // Logout Action
+  const handleLogout = () => {
+    localStorage.removeItem('gameNightUser'); // Wipe from phone memory
+    setUser(''); // Reset state to trigger Login Screen
+  };
+
+  // Vote Action
 
   const handleVote = async (collectionName: string, id: string, currentVotes: number) => {
     // We could eventually check if this user already voted here!
