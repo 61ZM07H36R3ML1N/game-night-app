@@ -231,7 +231,7 @@ const GameNightApp = () => {
 
         {/* MENU VIEW */}
         {!loading && activeTab === 'menu' && (
-          <div className="list-container">
+          <div className="list-container" style={{ padding: '0 16px' }}>
             <form onSubmit={handleAddMenuItem} className="input-group">
               <input type="text" value={newMenuItem} onChange={(e) => setNewMenuItem(e.target.value)} placeholder="Suggest food..." />
               <select className="category-select" value={menuCategory} onChange={(e) => setMenuCategory(e.target.value)}>
@@ -298,7 +298,7 @@ const GameNightApp = () => {
         {/* CHAT VIEW */}
         {!loading && activeTab === 'chat' && (
           <>
-            <div className="chat-container">
+            <div className="chat-container" style= {{ padding: '0 16px'}}>
               {messages.length === 0 && (
                 <div style={{ textAlign: 'center', opacity: 0.5, marginTop: '50px' }}>
                   <MessageCircle size={48} style={{ margin: '0 auto 10px', display: 'block' }} />
