@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css'; 
 import { db } from './firebase'; 
 import { collection, onSnapshot, addDoc, doc, updateDoc, query, orderBy } from 'firebase/firestore';
-import { Plus, LogOut } from 'lucide-react';
+import { Plus, LogOut, MessageCircle, Send } from 'lucide-react';
 
 // Default data
 const SEED_MENU = [
@@ -20,6 +20,25 @@ const GameNightApp = () => {
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Chat State
+  const [messages, setMessages] = useState<any[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+
+  // ... inside useEffect ...
+    // New Chat Listener
+    const chatQuery = query(collection(db, 'chat'), orderBy('createdAt', 'asc'));
+    const unsubscribeChat = onSnapshot(chatQuery, (snapshot) => {
+      const chatData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMessages(chatData);
+    });
+
+    return () => {
+      unsubscribeMenu();
+      unsubscribeGames();
+      unsubscribeChat();
+    };
+  }, []);
 
   // Inputs
   const [newSuggestion, setNewSuggestion] = useState('');
