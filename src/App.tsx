@@ -113,25 +113,36 @@ const GameNightApp = () => {
 
   // --- 3. RENDER ---
 
-  // OPTION 2: If no user, show Login Screen
+  // OPTION 2: If no user, show Login Screen with Header
   if (!user) {
     return (
       <div className="app-container">
+        
+        {/* 1. Header is BACK now */}
+        <div className="app-header">
+          <h1>🎲 Game Night</h1>
+          <p>Live Voting App</p>
+        </div>
+
+        {/* 2. Login Form (Centered in remaining space) */}
         <div className="login-screen">
-          <span className="login-icon">👋</span>
-          <h1>Welcome!</h1>
-          <p style={{ color: '#94a3b8', marginBottom: '30px' }}>Who is joining Game Night?</p>
-          <form onSubmit={handleJoin}>
-            <input 
-              className="login-input"
-              type="text" 
-              placeholder="Enter your name..." 
-              value={tempName}
-              onChange={(e) => setTempName(e.target.value)}
-              autoFocus
-            />
-            <button type="submit" className="join-btn">Join Party</button>
-          </form>
+          <div className="login-content">
+            <span className="login-icon">👋</span>
+            <h2>Welcome!</h2>
+            <p className="login-hint">Who is joining the party?</p>
+            
+            <form onSubmit={handleJoin} className="login-form">
+              <input 
+                className="login-input"
+                type="text" 
+                placeholder="Enter your name..." 
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+                autoFocus
+              />
+              <button type="submit" className="join-btn">Join Party</button>
+            </form>
+          </div>
         </div>
       </div>
     );
@@ -144,7 +155,13 @@ const GameNightApp = () => {
       {/* Header */}
       <div className="app-header">
         <h1>🎲 Game Night</h1>
-        <p>Logged in as <strong>{user}</strong></p>
+        <div className="user-bar">
+          <p>Hi, <strong>{user}</strong></p>
+          <button onClick={handleLogout} className="logout-btn" title="Logout">
+            <LogOut size={16} />
+            <span>Exit</span>
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
