@@ -182,6 +182,35 @@ const GameNightApp = () => {
     });
   };
 
+// -- ADMIN: RESET NIGHT ---
+const handleResetNight = async () => {
+    if (!window.confirm("🚨 DANGER: Delete ALL menu items, games, and chat?")) return;
+    if (!window.confirm("Are you REALLY sure? This cannot be undone.")) return;
+
+    setLoading(true);
+    try {
+      // Helper function to delete all docs in a collection
+      const clearCollection = async (name: string) => {
+        const q = query(collection(db, name));
+        const snapshot = await getDocs(q);
+        snapshot.forEach((doc) => deleteDoc(doc.ref));
+      };
+
+      await Promise.all([
+        clearCollection('menu'),
+        clearCollection('games'),
+        clearCollection('messages')
+      ]);
+
+      alert("💥 Board cleared!");
+    } catch (error) {
+      console.error("Error resetting:", error);
+      alert("Error resetting data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // --- 3. RENDER ---
 
   if (!user) {
