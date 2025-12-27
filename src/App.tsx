@@ -86,6 +86,16 @@ const GameNightApp = () => {
   };
 
   const handleVote = async (collectionName: string, id: string, currentVotes: number) => {
+    // 1. Play Sound
+    try {
+      const audio = new Audio('/pop_1.mp3');
+      audio.volume = 0.5; 
+      audio.play();
+    } catch (e) {
+      console.log("Audio play failed", e);
+    }
+
+    // 2. Send to Firebase
     const itemRef = doc(db, collectionName, id);
     await updateDoc(itemRef, { votes: currentVotes + 1 });
   };
