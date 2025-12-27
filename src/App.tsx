@@ -374,6 +374,25 @@ const handleResetNight = async () => {
             </form>
           </>
         )}
+    {/* Footer / Admin Zone */}
+        <div style={{ marginTop: '50px', padding: '20px', borderTop: '1px solid #333', textAlign: 'center', opacity: 0.6 }}>
+          <p style={{ fontSize: '0.8rem', marginBottom: '10px' }}>Admin Zone</p>
+          <button 
+            onClick={handleResetNight}
+            style={{ 
+              backgroundColor: '#dc2626', 
+              color: 'white', 
+              padding: '8px 16px', 
+              borderRadius: '6px', 
+              border: 'none', 
+              fontSize: '0.9rem',
+              cursor: 'pointer' 
+            }}
+          >
+            💣 Reset Night
+          </button>
+        </div>
+
       </div>
     </div>
   );
