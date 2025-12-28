@@ -1,115 +1,152 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { db } from './firebase';
+import { 
+  collection, 
+  addDoc, 
+  onSnapshot, 
+  updateDoc, 
+  doc, 
+  query, 
+  orderBy, 
+  serverTimestamp, 
+  deleteDoc 
+} from 'firebase/firestore';
+import { MessageCircle, Send, LogOut, Swords } from 'lucide-react';
 import Confetti from 'react-confetti';
-import './App.css'; 
-import { db } from './firebase'; 
-import { collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, getDocs, query, orderBy } from 'firebase/firestore';
-import { LogOut, MessageCircle, Send, Swords } from 'lucide-react';
+import './App.css';
 
-// Default data
-const SEED_MENU = [
-  { name: 'Loaded Nachos', category: 'Food', description: 'Jalapenos, beef, and queso', votes: 0 },
-  { name: 'Smash Burgers', category: 'Food', description: 'Double patty with house sauce', votes: 0 },
-  { name: 'Craft Sodas', category: 'Drink', description: 'Root beer, Cream soda, Orange', votes: 0 }
-];
+// --- TYPES ---
+interface MenuItem {
+  id: string;
+  name: string;
+  category: string;
+  votes: number;
+  description: string;
+}
+
+interface GameSuggestion {
+  id: string;
+  title: string;
+  votes: number;
+  suggestedBy: string;
+}
+
+interface ChatMessage {
+  id: string;
+  text: string;
+  sender: string;
+  createdAt: any;
+}
 
 const GameNightApp = () => {
   // --- STATE ---
-  const [user, setUser] = useState<string>(''); 
-  const [tempName, setTempName] = useState('');
-  
+  const [user, setUser] = useState<string>(() => localStorage.getItem('gn_user') || '');
   const [activeTab, setActiveTab] = useState('menu');
   const [loading, setLoading] = useState(true);
+  
+  // Data State
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [suggestions, setSuggestions] = useState<GameSuggestion[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  
+  // Input State
+  const [tempName, setTempName] = useState('');
+  const [newMenuItem, setNewMenuItem] = useState('');
+  const [menuCategory, setMenuCategory] = useState('Food');
+  const [newSuggestion, setNewSuggestion] = useState('');
+  const [newMessage, setNewMessage] = useState('');
 
+  // Juice State (Confetti & Sound)
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowDimension, setWindowDimension] = useState({ width: window.innerWidth, height: window.innerHeight });
 
-  // Helper to detect window resize (so confetti covers full screen)
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
+  // --- EFFECTS ---
+
+  // 1. Window Resize Listener (For Confetti)
   useEffect(() => {
     const handleResize = () => setWindowDimension({ width: window.innerWidth, height: window.innerHeight });
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-    }
-  // Data Collections
-  const [menuItems, setMenuItems] = useState<any[]>([]);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [messages, setMessages] = useState<any[]>([]);
-
-  // Inputs
-  const [newSuggestion, setNewSuggestion] = useState('');
-  const [newMenuItem, setNewMenuItem] = useState(''); 
-  const [menuCategory, setMenuCategory] = useState('Food');
-  const [newMessage, setNewMessage] = useState('');
-
-  // Auto-scroll ref
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // --- 1. SETUP & LISTENERS ---
+  // 2. Firebase Listeners
   useEffect(() => {
-    const savedName = localStorage.getItem('gameNightUser');
-    if (savedName) setUser(savedName);
+    setLoading(true);
 
-    // A. Menu Listener
-    const menuQuery = query(collection(db, 'menu'), orderBy('votes', 'desc'));
-    const unsubscribeMenu = onSnapshot(menuQuery, (snapshot) => {
-      const menuData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setMenuItems(menuData);
+    // Listen to Menu
+    const unsubMenu = onSnapshot(query(collection(db, 'menu'), orderBy('votes', 'desc')), (snapshot) => {
+      setMenuItems(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MenuItem)));
     });
 
-    // B. Games Listener
-    const gamesQuery = query(collection(db, 'games'), orderBy('votes', 'desc'));
-    const unsubscribeGames = onSnapshot(gamesQuery, (snapshot) => {
-      const gameData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSuggestions(gameData);
+    // Listen to Games
+    const unsubGames = onSnapshot(query(collection(db, 'games'), orderBy('votes', 'desc')), (snapshot) => {
+      setSuggestions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as GameSuggestion)));
+    });
+
+    // Listen to Chat
+    const unsubChat = onSnapshot(query(collection(db, 'messages'), orderBy('createdAt', 'asc')), (snapshot) => {
+      setMessages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ChatMessage)));
       setLoading(false);
     });
 
-    // C. Chat Listener
-    const chatQuery = query(collection(db, 'messages'), orderBy('createdAt', 'asc'));
-    const unsubscribeChat = onSnapshot(chatQuery, (snapshot) => {
-      const msgData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setMessages(msgData);
-    });
-
-    return () => {
-      unsubscribeMenu();
-      unsubscribeGames();
-      unsubscribeChat();
-    };
+    return () => { unsubMenu(); unsubGames(); unsubChat(); };
   }, []);
 
+  // Auto-scroll chat
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, activeTab]);
 
-  // --- 2. ACTIONS ---
-  
+  // --- ACTIONS ---
+
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!tempName.trim()) return;
-    localStorage.setItem('gameNightUser', tempName); 
+    localStorage.setItem('gn_user', tempName);
     setUser(tempName);
+    
+    // Announce arrival
+    addDoc(collection(db, 'messages'), {
+      text: `${tempName} joined the party!`,
+      sender: 'System',
+      createdAt: serverTimestamp()
+    });
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('gameNightUser'); 
-    setUser(''); 
+    localStorage.removeItem('gn_user');
+    setUser('');
   };
 
+  // VOTE FUNCTION (With "Pop" Sound 🔊)
   const handleVote = async (collectionName: string, id: string, currentVotes: number) => {
     // 1. Play Sound
     try {
-      const audio = new Audio('/pop_1.mp3');
+      const audio = new Audio('/pop.mp3');
       audio.volume = 0.5; 
       audio.play();
     } catch (e) {
       console.log("Audio play failed", e);
     }
 
-    // 2. Send to Firebase
+    // 2. Update Firebase
     const itemRef = doc(db, collectionName, id);
     await updateDoc(itemRef, { votes: currentVotes + 1 });
+  };
+
+  const handleAddMenuItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMenuItem.trim()) return;
+    await addDoc(collection(db, 'menu'), {
+      name: newMenuItem,
+      category: menuCategory,
+      votes: 1,
+      description: 'Added by ' + user,
+      createdAt: serverTimestamp()
+    });
+    setNewMenuItem('');
   };
 
   const handleAddSuggestion = async (e: React.FormEvent) => {
@@ -119,22 +156,9 @@ const GameNightApp = () => {
       title: newSuggestion,
       votes: 1,
       suggestedBy: user,
-      createdAt: Date.now()
+      createdAt: serverTimestamp()
     });
     setNewSuggestion('');
-  };
-
-  const handleAddMenuItem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMenuItem.trim()) return;
-    await addDoc(collection(db, 'menu'), {
-      name: newMenuItem,
-      category: menuCategory,
-      description: `Suggested by ${user}`,
-      votes: 1,
-      createdAt: Date.now()
-    });
-    setNewMenuItem('');
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -143,68 +167,60 @@ const GameNightApp = () => {
     await addDoc(collection(db, 'messages'), {
       text: newMessage,
       sender: user,
-      createdAt: Date.now()
+      createdAt: serverTimestamp()
     });
     setNewMessage('');
   };
 
-  const seedMenu = async () => {
-    SEED_MENU.forEach(async (item) => {
-      await addDoc(collection(db, 'menu'), item);
-    });
-  };
-
-  // --- NEW: THE RUNOFF FUNCTION ---
+  // RUNOFF FUNCTION (With Confetti 🎉)
   const handleRunoff = async () => {
-    // 1. Identify which list we are looking at
-    const collectionName = activeTab; // 'menu' or 'games'
-    if (collectionName === 'chat') return;
+    const list = activeTab === 'menu' ? menuItems : suggestions;
+    if (list.length <= 3) return alert("Need more than 3 items for a runoff!");
+    
+    // Trigger Confetti
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 8000); // Stop after 8 seconds
 
-    if (!window.confirm("⚠️ Are you sure? This will DELETE all items except the Top 3 and reset votes to 0.")) return;
+    const collectionName = activeTab === 'menu' ? 'menu' : 'games';
+    const top3 = list.slice(0, 3).map(i => i.id);
+    const losers = list.slice(3);
 
-    // 2. Get all items sorted by votes
-    const q = query(collection(db, collectionName), orderBy('votes', 'desc'));
-    const snapshot = await getDocs(q);
-    const docs = snapshot.docs;
-
-    if (docs.length <= 3) {
-      alert("Need more than 3 items to run a runoff!");
-      return;
-    }
-
-    // 3. Pick the winners (Top 3)
-    const top3Ids = docs.slice(0, 3).map(d => d.id);
-
-    // 4. Execute the Purge
-    docs.forEach(async (item) => {
-      if (top3Ids.includes(item.id)) {
-        // Winner: Keep it, but reset votes
-        await updateDoc(doc(db, collectionName, item.id), { votes: 0 });
-      } else {
-        // Loser: Delete it
-        await deleteDoc(doc(db, collectionName, item.id));
-      }
+    losers.forEach(async (item) => {
+      await deleteDoc(doc(db, collectionName, item.id));
     });
 
-    // 5. Announce it in chat automatically (Optional Polish)
-    await addDoc(collection(db, 'messages'), {
-      text: `⚔️ A Runoff has started for ${collectionName.toUpperCase()}! Only the Top 3 remain. Vote again!`,
-      sender: "System",
-      createdAt: Date.now()
+    alert(`⚔️ RUNOFF! Kept top 3. Deleted ${losers.length} items.`);
+  };
+
+  // DEBUG: Load Default Menu
+  const seedMenu = async () => {
+    const defaults = [
+      { name: 'Pepperoni Pizza', category: 'Food', desc: 'Classic choice' },
+      { name: 'Wings (Buffalo)', category: 'Food', desc: 'Spicy!' },
+      { name: 'Mountain Dew', category: 'Drink', desc: 'Gamer fuel' },
+      { name: 'Doritos', category: 'Snack', desc: 'Nacho Cheese' },
+    ];
+    defaults.forEach(async (d) => {
+      await addDoc(collection(db, 'menu'), {
+        name: d.name,
+        category: d.category,
+        votes: 0,
+        description: d.desc,
+        createdAt: serverTimestamp()
+      });
     });
   };
 
-// -- ADMIN: RESET NIGHT ---
-const handleResetNight = async () => {
+  // ADMIN: RESET NIGHT (The "Nuke" Button 💣)
+  const handleResetNight = async () => {
     if (!window.confirm("🚨 DANGER: Delete ALL menu items, games, and chat?")) return;
     if (!window.confirm("Are you REALLY sure? This cannot be undone.")) return;
 
     setLoading(true);
     try {
-      // Helper function to delete all docs in a collection
       const clearCollection = async (name: string) => {
         const q = query(collection(db, name));
-        const snapshot = await getDocs(q);
+        const snapshot = await (await import('firebase/firestore')).getDocs(q);
         snapshot.forEach((doc) => deleteDoc(doc.ref));
       };
 
@@ -256,7 +272,9 @@ const handleResetNight = async () => {
 
   return (
     <div className="app-container">
-      
+      {/* Confetti Layer */}
+      {showConfetti && <Confetti width={windowDimension.width} height={windowDimension.height} />}
+
       {/* Header */}
       <div className="app-header">
         <h1>🎲 Game Night</h1>
@@ -306,7 +324,6 @@ const handleResetNight = async () => {
               </div>
             ))}
             
-            {/* Runoff Button (Only shows if there are more than 3 items) */}
             {menuItems.length > 3 && (
               <button className="runoff-btn" onClick={handleRunoff}>
                 <Swords size={18} /> Runoff (Top 3)
@@ -337,7 +354,6 @@ const handleResetNight = async () => {
               </div>
             ))}
 
-            {/* Runoff Button (Only shows if there are more than 3 items) */}
             {suggestions.length > 3 && (
               <button className="runoff-btn" onClick={handleRunoff}>
                 <Swords size={18} /> Runoff (Top 3)
@@ -359,7 +375,6 @@ const handleResetNight = async () => {
               
               {messages.map((msg) => {
                 const isMe = msg.sender === user;
-                // Special style for System messages
                 const isSystem = msg.sender === 'System';
                 
                 if (isSystem) {
@@ -386,7 +401,8 @@ const handleResetNight = async () => {
             </form>
           </>
         )}
-    {/* Footer / Admin Zone */}
+
+        {/* Footer / Admin Zone */}
         <div style={{ marginTop: '50px', padding: '20px', borderTop: '1px solid #333', textAlign: 'center', opacity: 0.6 }}>
           <p style={{ fontSize: '0.8rem', marginBottom: '10px' }}>Admin Zone</p>
           <button 
@@ -405,8 +421,8 @@ const handleResetNight = async () => {
           </button>
         </div>
 
-      </div>
-    </div>
+      </div> {/* Closes content-area */}
+    </div> /* Closes app-container */
   );
 };
 
