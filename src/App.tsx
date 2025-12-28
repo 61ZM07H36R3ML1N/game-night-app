@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Confetti from 'react-confetti';
 import './App.css'; 
 import { db } from './firebase'; 
 import { collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, getDocs, query, orderBy } from 'firebase/firestore';
@@ -19,6 +20,17 @@ const GameNightApp = () => {
   const [activeTab, setActiveTab] = useState('menu');
   const [loading, setLoading] = useState(true);
 
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowDimension, setWindowDimension] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+  // Helper to detect window resize (so confetti covers full screen)
+  useEffect(() => {
+    const handleResize = () => setWindowDimension({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+    }
   // Data Collections
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [suggestions, setSuggestions] = useState<any[]>([]);
