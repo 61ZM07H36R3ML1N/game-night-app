@@ -1,29 +1,8 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // 1. MENU COLLECTION
-    // Allows adding food/drinks, voting, and deleting (for Runoff)
-    match /menu/{itemId} {
-      allow read: if true;
-      allow write: if true; 
-    }
-
-    // 2. GAMES COLLECTION
-    // Allows adding games, voting, and deleting (for Runoff)
-    match /games/{gameId} {
-      allow read: if true;
-      allow write: if true;
-    }
-
-    // 3. CHAT COLLECTION
-    // Allows sending messages. 
-    // (Optional: We could block 'delete' here so chat history is permanent)
-    match /messages/{messageId} {
-      allow read: if true;
-      allow create: if true;
-      // Block deleting or editing chat messages for integrity
-      allow update, delete: if false; 
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }

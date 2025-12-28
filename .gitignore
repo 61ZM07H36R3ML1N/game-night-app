@@ -30,3 +30,4 @@ dist-ssr
 dist/
 firebase-debug.log
 firebase-debug.*.log
+.firebase/hosting.cache*

@@ -1,105 +1,191 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './App.css'; 
-import { db } from './firebase'; 
-import { collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, getDocs, query, orderBy } from 'firebase/firestore';
-import { LogOut, MessageCircle, Send, Swords } from 'lucide-react';
+import { db } from './firebase';
+import { 
+  collection, 
+  addDoc, 
+  onSnapshot, 
+  updateDoc, 
+  doc, 
+  query, 
+  orderBy, 
+  serverTimestamp, 
+  deleteDoc,
+  arrayUnion,
+  arrayRemove,
+  increment,
+  setDoc,
+  getDoc
+} from 'firebase/firestore';
+import { MessageCircle, Send, LogOut, Swords, Calendar as CalendarIcon } from 'lucide-react';
+import Confetti from 'react-confetti';
+import toast, { Toaster } from 'react-hot-toast'; // <--- NEW: Toasts
+import './App.css';
 
-// Default data
-const SEED_MENU = [
-  { name: 'Loaded Nachos', category: 'Food', description: 'Jalapenos, beef, and queso', votes: 0 },
-  { name: 'Smash Burgers', category: 'Food', description: 'Double patty with house sauce', votes: 0 },
-  { name: 'Craft Sodas', category: 'Drink', description: 'Root beer, Cream soda, Orange', votes: 0 }
-];
+// --- TYPES ---
+interface MenuItem {
+  id: string;
+  name: string;
+  category: string;
+  votes: number;
+  votedBy: string[]; // <--- NEW: Track who voted
+  description: string;
+}
+
+interface GameSuggestion {
+  id: string;
+  title: string;
+  votes: number;
+  votedBy: string[]; // <--- NEW: Track who voted
+  suggestedBy: string;
+}
+
+interface ChatMessage {
+  id: string;
+  text: string;
+  sender: string;
+  createdAt: any;
+}
 
 const GameNightApp = () => {
   // --- STATE ---
-  const [user, setUser] = useState<string>(''); 
-  const [tempName, setTempName] = useState('');
-  
+  const [user, setUser] = useState<string>(() => localStorage.getItem('gn_user') || '');
   const [activeTab, setActiveTab] = useState('menu');
   const [loading, setLoading] = useState(true);
-
-  // Data Collections
-  const [menuItems, setMenuItems] = useState<any[]>([]);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [messages, setMessages] = useState<any[]>([]);
-
-  // Inputs
-  const [newSuggestion, setNewSuggestion] = useState('');
-  const [newMenuItem, setNewMenuItem] = useState(''); 
+  
+  // Data State
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [suggestions, setSuggestions] = useState<GameSuggestion[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [gameDate, setGameDate] = useState(''); // <--- NEW: Date State
+  
+  // Input State
+  const [tempName, setTempName] = useState('');
+  const [newMenuItem, setNewMenuItem] = useState('');
   const [menuCategory, setMenuCategory] = useState('Food');
+  const [newSuggestion, setNewSuggestion] = useState('');
   const [newMessage, setNewMessage] = useState('');
 
-  // Auto-scroll ref
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Juice State
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowDimension, setWindowDimension] = useState({ width: window.innerWidth, height: window.innerHeight });
 
-  // --- 1. SETUP & LISTENERS ---
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
+  // --- EFFECTS ---
+
+  // 1. Resize Listener
   useEffect(() => {
-    const savedName = localStorage.getItem('gameNightUser');
-    if (savedName) setUser(savedName);
+    const handleResize = () => setWindowDimension({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    // A. Menu Listener
-    const menuQuery = query(collection(db, 'menu'), orderBy('votes', 'desc'));
-    const unsubscribeMenu = onSnapshot(menuQuery, (snapshot) => {
-      const menuData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setMenuItems(menuData);
+  // 2. Firebase Listeners
+  useEffect(() => {
+    setLoading(true);
+
+    // Listen to Date Config
+    const unsubDate = onSnapshot(doc(db, 'config', 'main'), (doc) => {
+      if (doc.exists()) {
+        setGameDate(doc.data().nextSession || '');
+      }
     });
 
-    // B. Games Listener
-    const gamesQuery = query(collection(db, 'games'), orderBy('votes', 'desc'));
-    const unsubscribeGames = onSnapshot(gamesQuery, (snapshot) => {
-      const gameData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSuggestions(gameData);
+    // Listen to Menu
+    const unsubMenu = onSnapshot(query(collection(db, 'menu'), orderBy('votes', 'desc')), (snapshot) => {
+      setMenuItems(snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data(),
+        votedBy: doc.data().votedBy || [] // Handle legacy items
+      } as MenuItem)));
+    });
+
+    // Listen to Games
+    const unsubGames = onSnapshot(query(collection(db, 'games'), orderBy('votes', 'desc')), (snapshot) => {
+      setSuggestions(snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data(),
+        votedBy: doc.data().votedBy || [] 
+      } as GameSuggestion)));
+    });
+
+    // Listen to Chat
+    const unsubChat = onSnapshot(query(collection(db, 'messages'), orderBy('createdAt', 'asc')), (snapshot) => {
+      setMessages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ChatMessage)));
       setLoading(false);
     });
 
-    // C. Chat Listener
-    const chatQuery = query(collection(db, 'messages'), orderBy('createdAt', 'asc'));
-    const unsubscribeChat = onSnapshot(chatQuery, (snapshot) => {
-      const msgData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setMessages(msgData);
-    });
-
-    return () => {
-      unsubscribeMenu();
-      unsubscribeGames();
-      unsubscribeChat();
-    };
+    return () => { unsubMenu(); unsubGames(); unsubChat(); unsubDate(); };
   }, []);
 
+  // Auto-scroll chat
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, activeTab]);
 
-  // --- 2. ACTIONS ---
-  
+  // --- ACTIONS ---
+
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!tempName.trim()) return;
-    localStorage.setItem('gameNightUser', tempName); 
+    localStorage.setItem('gn_user', tempName);
     setUser(tempName);
+    toast.success(`Welcome to the party, ${tempName}!`); // <--- NEW Toast
+    
+    addDoc(collection(db, 'messages'), {
+      text: `${tempName} joined the party!`,
+      sender: 'System',
+      createdAt: serverTimestamp()
+    });
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('gameNightUser'); 
-    setUser(''); 
+    localStorage.removeItem('gn_user');
+    setUser('');
+    toast('See ya later!', { icon: '👋' });
   };
 
-  const handleVote = async (collectionName: string, id: string, currentVotes: number) => {
+  // --- NEW: DATE PICKER LOGIC ---
+  const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = e.target.value;
+    setGameDate(newDate);
+    // Save to 'config/main' document
+    await setDoc(doc(db, 'config', 'main'), { nextSession: newDate }, { merge: true });
+    toast.success('Date updated!');
+  };
+
+  // --- UPDATED: VOTE TOGGLE (ANTI-RIGGING) ---
+  const handleVote = async (collectionName: string, id: string, votedBy: string[] = []) => {
     const itemRef = doc(db, collectionName, id);
-    await updateDoc(itemRef, { votes: currentVotes + 1 });
-  };
+    const hasVoted = votedBy.includes(user);
 
-  const handleAddSuggestion = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newSuggestion.trim()) return;
-    await addDoc(collection(db, 'games'), {
-      title: newSuggestion,
-      votes: 1,
-      suggestedBy: user,
-      createdAt: Date.now()
-    });
-    setNewSuggestion('');
+    try {
+      if (hasVoted) {
+        // REMOVE VOTE
+        await updateDoc(itemRef, {
+          votes: increment(-1),
+          votedBy: arrayRemove(user)
+        });
+        toast('Vote removed', { icon: '↩️' });
+      } else {
+        // ADD VOTE
+        // Play Sound
+        try {
+          const audio = new Audio('/pop_1.mp3');
+          audio.volume = 0.5; 
+          audio.play();
+        } catch (e) { console.log("Audio error", e); }
+
+        await updateDoc(itemRef, {
+          votes: increment(1),
+          votedBy: arrayUnion(user)
+        });
+        toast.success('Voted!');
+      }
+    } catch (error) {
+      console.error("Vote failed:", error);
+      toast.error("Voting failed. Try again.");
+    }
   };
 
   const handleAddMenuItem = async (e: React.FormEvent) => {
@@ -108,11 +194,27 @@ const GameNightApp = () => {
     await addDoc(collection(db, 'menu'), {
       name: newMenuItem,
       category: menuCategory,
-      description: `Suggested by ${user}`,
       votes: 1,
-      createdAt: Date.now()
+      votedBy: [user], // Auto-vote for your own suggestion
+      description: 'Added by ' + user,
+      createdAt: serverTimestamp()
     });
     setNewMenuItem('');
+    toast.success('Added to Menu!');
+  };
+
+  const handleAddSuggestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSuggestion.trim()) return;
+    await addDoc(collection(db, 'games'), {
+      title: newSuggestion,
+      votes: 1,
+      votedBy: [user], // Auto-vote
+      suggestedBy: user,
+      createdAt: serverTimestamp()
+    });
+    setNewSuggestion('');
+    toast.success('Game suggested!');
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -121,62 +223,79 @@ const GameNightApp = () => {
     await addDoc(collection(db, 'messages'), {
       text: newMessage,
       sender: user,
-      createdAt: Date.now()
+      createdAt: serverTimestamp()
     });
     setNewMessage('');
   };
 
-  const seedMenu = async () => {
-    SEED_MENU.forEach(async (item) => {
-      await addDoc(collection(db, 'menu'), item);
-    });
-  };
-
-  // --- NEW: THE RUNOFF FUNCTION ---
   const handleRunoff = async () => {
-    // 1. Identify which list we are looking at
-    const collectionName = activeTab; // 'menu' or 'games'
-    if (collectionName === 'chat') return;
+    const list = activeTab === 'menu' ? menuItems : suggestions;
+    if (list.length <= 3) return toast.error("Need more than 3 items for a runoff!");
+    
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 8000);
 
-    if (!window.confirm("⚠️ Are you sure? This will DELETE all items except the Top 3 and reset votes to 0.")) return;
+    const collectionName = activeTab === 'menu' ? 'menu' : 'games';
+    const top3 = list.slice(0, 3).map(i => i.id);
+    const losers = list.slice(3);
 
-    // 2. Get all items sorted by votes
-    const q = query(collection(db, collectionName), orderBy('votes', 'desc'));
-    const snapshot = await getDocs(q);
-    const docs = snapshot.docs;
-
-    if (docs.length <= 3) {
-      alert("Need more than 3 items to run a runoff!");
-      return;
-    }
-
-    // 3. Pick the winners (Top 3)
-    const top3Ids = docs.slice(0, 3).map(d => d.id);
-
-    // 4. Execute the Purge
-    docs.forEach(async (item) => {
-      if (top3Ids.includes(item.id)) {
-        // Winner: Keep it, but reset votes
-        await updateDoc(doc(db, collectionName, item.id), { votes: 0 });
-      } else {
-        // Loser: Delete it
-        await deleteDoc(doc(db, collectionName, item.id));
-      }
+    losers.forEach(async (item) => {
+      await deleteDoc(doc(db, collectionName, item.id));
     });
 
-    // 5. Announce it in chat automatically (Optional Polish)
-    await addDoc(collection(db, 'messages'), {
-      text: `⚔️ A Runoff has started for ${collectionName.toUpperCase()}! Only the Top 3 remain. Vote again!`,
-      sender: "System",
-      createdAt: Date.now()
-    });
+    toast.success(`Runoff Complete! ${losers.length} items removed.`);
   };
 
-  // --- 3. RENDER ---
+  const seedMenu = async () => {
+    const defaults = [
+      { name: 'Pepperoni Pizza', category: 'Food', desc: 'Classic choice' },
+      { name: 'Wings (Buffalo)', category: 'Food', desc: 'Spicy!' },
+      { name: 'Mountain Dew', category: 'Drink', desc: 'Gamer fuel' },
+    ];
+    defaults.forEach(async (d) => {
+      await addDoc(collection(db, 'menu'), {
+        name: d.name,
+        category: d.category,
+        votes: 0,
+        votedBy: [],
+        description: d.desc,
+        createdAt: serverTimestamp()
+      });
+    });
+    toast.success("Default menu loaded");
+  };
+
+  const handleResetNight = async () => {
+    if (!window.confirm("🚨 DANGER: Delete ALL data?")) return;
+    
+    setLoading(true);
+    try {
+      const clearCollection = async (name: string) => {
+        const q = query(collection(db, name));
+        const snapshot = await (await import('firebase/firestore')).getDocs(q);
+        snapshot.forEach((doc) => deleteDoc(doc.ref));
+      };
+
+      await Promise.all([
+        clearCollection('menu'),
+        clearCollection('games'),
+        clearCollection('messages')
+      ]);
+
+      toast.success("💥 Board cleared!");
+    } catch (error) {
+      toast.error("Reset failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- RENDER ---
 
   if (!user) {
     return (
       <div className="app-container">
+        <Toaster position="top-center" />
         <div className="app-header">
           <h1>🎲 Game Night</h1>
           <p>Live Voting App</p>
@@ -205,10 +324,30 @@ const GameNightApp = () => {
 
   return (
     <div className="app-container">
-      
+      <Toaster position="top-center" />
+      {showConfetti && <Confetti width={windowDimension.width} height={windowDimension.height} />}
+
       {/* Header */}
       <div className="app-header">
         <h1>🎲 Game Night</h1>
+        
+        {/* NEW: Date Picker */}
+        <div className="date-picker-container" style={{ margin: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <CalendarIcon size={18} color="#fbbf24" />
+          <input 
+            type="date" 
+            value={gameDate} 
+            onChange={handleDateChange}
+            style={{ 
+              background: '#333', 
+              border: '1px solid #555', 
+              color: 'white', 
+              padding: '4px 8px', 
+              borderRadius: '4px' 
+            }} 
+          />
+        </div>
+
         <div className="user-bar">
           <p>Hi, <strong>{user}</strong></p>
           <button onClick={handleLogout} className="logout-btn" title="Logout">
@@ -219,7 +358,7 @@ const GameNightApp = () => {
       </div>
 
       {/* Tabs */}
-      <div className="tabs">
+      <div className="tabs" style={{ padding: '0 16px'}}>
         <button className={`tab-btn ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>🍕 Menu</button>
         <button className={`tab-btn ${activeTab === 'games' ? 'active' : ''}`} onClick={() => setActiveTab('games')}>🎮 Games</button>
         <button className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>💬 Chat</button>
@@ -231,7 +370,7 @@ const GameNightApp = () => {
 
         {/* MENU VIEW */}
         {!loading && activeTab === 'menu' && (
-          <div className="list-container">
+          <div className="list-container" style={{ padding: '0 16px' }}>
             <form onSubmit={handleAddMenuItem} className="input-group">
               <input type="text" value={newMenuItem} onChange={(e) => setNewMenuItem(e.target.value)} placeholder="Suggest food..." />
               <select className="category-select" value={menuCategory} onChange={(e) => setMenuCategory(e.target.value)}>
@@ -242,20 +381,26 @@ const GameNightApp = () => {
               <button type="submit">+</button>
             </form>
 
-            {menuItems.map((item) => (
-              <div key={item.id} className="card menu-card">
-                <div className="card-info">
-                  <h3>{item.name}</h3>
-                  <span className="badge">{item.category}</span>
-                  <p>{item.description}</p>
+            {menuItems.map((item) => {
+              const hasVoted = item.votedBy?.includes(user);
+              return (
+                <div key={item.id} className="card menu-card">
+                  <div className="card-info">
+                    <h3>{item.name}</h3>
+                    <span className="badge">{item.category}</span>
+                    <p>{item.description}</p>
+                  </div>
+                  <button 
+                    className={`vote-btn ${hasVoted ? 'voted' : ''}`} 
+                    onClick={() => handleVote('menu', item.id, item.votedBy)}
+                    style={hasVoted ? { backgroundColor: '#10b981', color: 'white' } : {}}
+                  >
+                    {hasVoted ? '✅' : '👍'} {item.votes}
+                  </button>
                 </div>
-                <button className="vote-btn" onClick={() => handleVote('menu', item.id, item.votes)}>
-                  👍 {item.votes}
-                </button>
-              </div>
-            ))}
+              );
+            })}
             
-            {/* Runoff Button (Only shows if there are more than 3 items) */}
             {menuItems.length > 3 && (
               <button className="runoff-btn" onClick={handleRunoff}>
                 <Swords size={18} /> Runoff (Top 3)
@@ -274,19 +419,25 @@ const GameNightApp = () => {
               <button type="submit">+</button>
             </form>
 
-            {suggestions.map((game) => (
-              <div key={game.id} className="card game-card">
-                <div className="card-info">
-                  <span className="game-title" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{game.title}</span>
-                  {game.suggestedBy && <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>By: {game.suggestedBy}</p>}
+            {suggestions.map((game) => {
+              const hasVoted = game.votedBy?.includes(user);
+              return (
+                <div key={game.id} className="card game-card">
+                  <div className="card-info">
+                    <span className="game-title" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{game.title}</span>
+                    {game.suggestedBy && <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>By: {game.suggestedBy}</p>}
+                  </div>
+                  <button 
+                    className={`vote-btn ${hasVoted ? 'voted' : ''}`} 
+                    onClick={() => handleVote('games', game.id, game.votedBy)}
+                    style={hasVoted ? { backgroundColor: '#10b981', color: 'white' } : {}}
+                  >
+                    {hasVoted ? '✅' : '👍'} {game.votes}
+                  </button>
                 </div>
-                <button className="vote-btn" onClick={() => handleVote('games', game.id, game.votes)}>
-                  👍 {game.votes}
-                </button>
-              </div>
-            ))}
+              );
+            })}
 
-            {/* Runoff Button (Only shows if there are more than 3 items) */}
             {suggestions.length > 3 && (
               <button className="runoff-btn" onClick={handleRunoff}>
                 <Swords size={18} /> Runoff (Top 3)
@@ -298,7 +449,7 @@ const GameNightApp = () => {
         {/* CHAT VIEW */}
         {!loading && activeTab === 'chat' && (
           <>
-            <div className="chat-container">
+            <div className="chat-container" style= {{ padding: '0 16px'}}>
               {messages.length === 0 && (
                 <div style={{ textAlign: 'center', opacity: 0.5, marginTop: '50px' }}>
                   <MessageCircle size={48} style={{ margin: '0 auto 10px', display: 'block' }} />
@@ -308,7 +459,6 @@ const GameNightApp = () => {
               
               {messages.map((msg) => {
                 const isMe = msg.sender === user;
-                // Special style for System messages
                 const isSystem = msg.sender === 'System';
                 
                 if (isSystem) {
@@ -335,6 +485,26 @@ const GameNightApp = () => {
             </form>
           </>
         )}
+
+        {/* Footer / Admin Zone */}
+        <div style={{ marginTop: '50px', padding: '20px', borderTop: '1px solid #333', textAlign: 'center', opacity: 0.6 }}>
+          <p style={{ fontSize: '0.8rem', marginBottom: '10px' }}>Admin Zone</p>
+          <button 
+            onClick={handleResetNight}
+            style={{ 
+              backgroundColor: '#dc2626', 
+              color: 'white', 
+              padding: '8px 16px', 
+              borderRadius: '6px', 
+              border: 'none', 
+              fontSize: '0.9rem',
+              cursor: 'pointer' 
+            }}
+          >
+            💣 Reset Night
+          </button>
+        </div>
+
       </div>
     </div>
   );
