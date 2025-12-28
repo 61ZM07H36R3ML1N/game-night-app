@@ -124,7 +124,7 @@ const GameNightApp = () => {
   const handleVote = async (collectionName: string, id: string, currentVotes: number) => {
     // 1. Play Sound
     try {
-      const audio = new Audio('/pop.mp3');
+      const audio = new Audio('/pop_1.mp3');
       audio.volume = 0.5; 
       audio.play();
     } catch (e) {
