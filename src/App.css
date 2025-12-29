@@ -1,313 +1,151 @@
-CSS
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: dark;
-}
-
+/* --- 1. Global Background (Essential for Glass Effect) --- */
 body {
   margin: 0;
-  padding: 0;
-  background-color: #0f172a; /* Dark background for desktop void */
-  display: flex;
-  place-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  color: #e2e8f0;
+  /* Deep gaming purple-to-black gradient */
+  background: radial-gradient(circle at 10% 20%, #4c1d95 0%, #0f172a 90%);
+  background-attachment: fixed; /* Keeps gradient still while scrolling */
+  color: white;
+  font-family: 'Inter', sans-serif; /* Or your preferred font */
 }
 
-/* --- MAIN CONTAINER --- */
-/* Mobile First: By default, take up the whole screen */
+/* --- 2. The Main Glass Container --- */
 .app-container {
-  width: 100%;
-  height: 100vh; /* Full height on phone */
-  background-color: #1e293b;
+  max-width: 480px; /* Mobile width */
+  margin: 20px auto;
+  min-height: 90vh;
+  
+  /* The Glass Effect */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  
+  overflow: hidden; /* Clips children to the rounded corners */
   display: flex;
   flex-direction: column;
-  position: relative;
-  overflow: hidden;
 }
 
-/* Desktop Tweak: If screen is wide, act like a floating phone */
-@media (min-width: 600px) {
-  .app-container {
-    max-width: 480px;
-    height: 90vh;
-    border-radius: 24px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    border: 1px solid #334155;
-  }
-}
-
-/* --- HEADER --- */
-.app-header {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Purple Gradient */
+/* --- 3. The Header (Gradient Top) --- */
+.glass-header {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.6), rgba(76, 29, 149, 0.2));
   padding: 20px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  z-index: 10;
+  /* This centers everything nicely */
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  gap: 10px; /* Space between Title and Date */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.app-header h1 {
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between Dice and Text */
+  font-size: 2rem; /* Make title big but not huge */
+  font-weight: bold;
   margin: 0;
-  font-size: 1.8rem;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
+/* --- The User / Exit Row --- */
 .user-bar {
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* Pushes Name left and Exit right */
   align-items: center;
-  gap: 15px;
+  padding: 0 20px; /* Adds breathing room from the edges */
   margin-top: 10px;
-  background: rgba(0,0,0,0.2);
-  padding: 5px 15px;
-  border-radius: 20px;
-  display: inline-flex;
-}
-
-.user-bar p {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.logout-btn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.3);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-}
-
-/* --- TABS --- */
-.tabs {
-  display: flex;
-  background-color: #1e293b;
-  border-bottom: 1px solid #334155;
-  padding: 0;
-}
-
-.tab-btn {
-  flex: 1;
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  padding: 15px 0;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
-}
-
-.tab-btn.active {
-  color: #a855f7; /* Active Purple */
-  border-bottom: 3px solid #a855f7;
-}
-
-/* --- CONTENT AREA --- */
-.content-area {
-  flex: 1;
-  overflow-y: auto; /* Scrollable content */
-  padding-bottom: 20px;
-  background-color: #0f172a;
-}
-
-.list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding-top: 20px;
-}
-
-/* --- INPUTS & FORMS --- */
-.input-group {
-  display: flex;
-  gap: 8px;
   margin-bottom: 10px;
 }
 
-input, select {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  color: white;
-  padding: 12px;
-  border-radius: 12px;
-  font-size: 1rem;
-  outline: none;
-}
-
-input { flex: 1; }
-
-.input-group button {
-  background-color: #a855f7;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  width: 50px;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-/* --- CARDS --- */
-.card {
-  background-color: #1e293b;
-  padding: 15px;
-  border-radius: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #334155;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.card h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
-.card p { margin: 0; font-size: 0.85rem; color: #94a3b8; }
-.badge {
-  background-color: #334155;
-  color: #cbd5e1;
-  font-size: 0.7rem;
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin-left: 8px;
-}
-
-.vote-btn {
-  background-color: #334155;
-  border: none;
+.date-picker-styled {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
   padding: 8px 12px;
-  border-radius: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  min-width: 60px;
-}
-
-.vote-btn.voted {
-  background-color: #10b981; /* Green */
-}
-
-/* --- CHAT --- */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 15px;
-  height: calc(100vh - 250px);
-  overflow-y: auto;
-}
-
-.message-bubble {
-  padding: 10px 14px;
-  border-radius: 18px;
-  max-width: 80%;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.message-mine {
-  background-color: #a855f7;
-  color: white;
-  align-self: flex-end;
-  border-bottom-right-radius: 4px;
-}
-
-.message-other {
-  background-color: #334155;
-  color: #e2e8f0;
-  align-self: flex-start;
-  border-bottom-left-radius: 4px;
-}
-
-.message-sender {
-  display: block;
-  font-size: 0.7rem;
-  opacity: 0.7;
-  margin-bottom: 2px;
-}
-
-.chat-input-area {
-  display: flex;
-  padding: 10px;
-  background-color: #1e293b;
-  border-top: 1px solid #334155;
-}
-
-.send-btn {
-  background-color: #a855f7;
-  border: none;
-  color: white;
-  padding: 0 20px;
-  border-radius: 12px;
-  margin-left: 8px;
+  border-radius: 8px;
+  font-family: inherit;
   cursor: pointer;
 }
+/* Fix for the white calendar icon in dark mode */
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
 
-/* --- LOGIN SCREEN --- */
-.login-screen {
-  width: 100%;
-  height: 100%;
+/* --- 4. The Action Bar (Inputs) --- */
+.action-bar {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #0f172a;
-}
-
-.login-content {
-  text-align: center;
-  background-color: #1e293b;
-  padding: 40px;
-  border-radius: 24px;
-  width: 90%;
-  max-width: 350px;
-  border: 1px solid #334155;
-}
-
-.login-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
-.login-input { width: 100%; margin: 20px 0; box-sizing: border-box; }
-.join-btn {
-  width: 100%;
-  padding: 15px;
-  background-color: #10b981;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* --- BUTTONS --- */
-.runoff-btn {
-  width: 100%;
-  margin-top: 20px;
-  padding: 12px;
-  background-color: #f59e0b; /* Amber */
-  color: black;
-  border: none;
-  border-radius: 12px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: stretch; /* Forces all inputs to be the EXACT same height */
   gap: 8px;
-  cursor: pointer;
+  padding: 10px 20px; /* Side padding so it doesn't touch edges */
 }
 
-.seed-btn {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  background: transparent;
-  border: 1px dashed #475569;
-  color: #94a3b8;
+.glass-input, .glass-select {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+}
+
+/* Make the text box grow to fill space */
+.glass-input {
+  flex: 1; 
+}
+
+/* Focus Glow Effect */
+.glass-input:focus, .glass-select:focus {
+  outline: none;
+  border-color: #a855f7; /* Purple Glow */
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+.glass-btn-add {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  border: none;
+  width: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  color: white;
+  font-size: 24px;
   border-radius: 12px;
   cursor: pointer;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  transition: transform 0.1s;
+}
+
+.glass-btn-add:active {
+  transform: scale(0.95);
+}
+
+/* --- 5. Navigation Tabs --- */
+.nav-tabs {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(0,0,0,0.2);
+  padding: 10px 0;
+}
+
+.tab {
+  color: #aaa;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  background: rgba(168, 85, 247, 0.2); /* Faint purple bg */
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+}
+
+.glass-input, .glass-select, .glass-btn-add {
+  height: 45px; /* Explicit height fixes the "jagged" look */
+  box-sizing: border-box; /* Ensures padding doesn't add extra width */
 }
