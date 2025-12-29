@@ -15,7 +15,7 @@ import {
   increment,
   setDoc,
 } from 'firebase/firestore';
-import { MessageCircle, Send, LogOut, Swords, Calendar as CalendarIcon } from 'lucide-react';
+import { MessageCircle, Send, LogOut, Swords } from 'lucide-react';
 import Confetti from 'react-confetti';
 import toast, { Toaster } from 'react-hot-toast';
 import './App.css';
