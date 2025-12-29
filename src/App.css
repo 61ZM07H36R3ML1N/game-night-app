@@ -1,51 +1,58 @@
-CSS
-/* src/App.css */
-
-/* Global Reset */
-* {
-  box-sizing: border-box;
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
 }
 
-/* 1. The "Frame" (Your Browser Window) */
 body {
   margin: 0;
-  background-color: #1e293b; /* Dark Slate background */
-  color: #f1f5f9;            /* Light Text */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-  /* This centers the phone app in the middle of the screen */
+  padding: 0;
+  background-color: #0f172a; /* Dark background for desktop void */
   display: flex;
+  place-items: center;
   justify-content: center;
-  align-items: center;
   min-height: 100vh;
+  color: #e2e8f0;
 }
 
-/* 2. The "Phone" (The App Itself) */
+/* --- MAIN CONTAINER --- */
+/* Mobile First: By default, take up the whole screen */
 .app-container {
   width: 100%;
-  max-width: 600px;          /* Wider: Looks better on desktop, still fits phone */
-  min-height: 500px;         /* Starts with a good size */
-  max-height: 90vh;          /* Won't go off the screen */
-  
-  background-color: #0f172a; 
-  border-radius: 20px;       /* Slightly softer corners */
-  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8); 
-  border: 1px solid #334155;
-  overflow: hidden;
-  
+  height: 100vh; /* Full height on phone */
+  background-color: #1e293b;
   display: flex;
   flex-direction: column;
-  
-  /* Smooth transition if window resizes */
-  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-/* 3. Header */
+/* Desktop Tweak: If screen is wide, act like a floating phone */
+@media (min-width: 600px) {
+  .app-container {
+    max-width: 480px;
+    height: 90vh;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid #334155;
+  }
+}
+
+/* --- HEADER --- */
 .app-header {
-  background-color: #4f46e5;
-  padding: 20px 20px 15px 20px; /* Slightly less bottom padding */
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Purple Gradient */
+  padding: 20px;
   text-align: center;
-  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .user-bar {
@@ -54,249 +61,219 @@ body {
   align-items: center;
   gap: 15px;
   margin-top: 10px;
-  background-color: rgba(0, 0, 0, 0.2); /* Darken the area behind the name */
-  padding: 8px 16px;
+  background: rgba(0,0,0,0.2);
+  padding: 5px 15px;
   border-radius: 20px;
-  display: inline-flex; /* Shrink to fit content */
+  display: inline-flex;
 }
 
 .user-bar p {
   margin: 0;
   font-size: 0.9rem;
-  color: #e0e7ff;
 }
 
 .logout-btn {
-  background: none;
-  border: none;
-  color: #ff8a8a; /* Light red for logout */
-  cursor: pointer;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 0;
-  font-size: 0.8rem;
-  font-weight: bold;
-  opacity: 0.8;
-  transition: opacity 0.2s;
+  gap: 4px;
+  cursor: pointer;
 }
 
-.logout-btn:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-
-
-/* 4. Navigation Tabs */
+/* --- TABS --- */
 .tabs {
   display: flex;
   background-color: #1e293b;
   border-bottom: 1px solid #334155;
-  flex-shrink: 0; /* Keep tabs fixed */
+  padding: 0;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 15px;
-  background: none;
+  background: transparent;
   border: none;
   color: #94a3b8;
+  padding: 15px 0;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   border-bottom: 3px solid transparent;
   transition: all 0.2s;
 }
 
 .tab-btn.active {
-  color: #818cf8; /* Light Indigo */
-  border-bottom-color: #818cf8;
-  background-color: #1e293b;
+  color: #a855f7; /* Active Purple */
+  border-bottom: 3px solid #a855f7;
 }
 
-/* 5. Scrollable Content Area */
+/* --- CONTENT AREA --- */
 .content-area {
-  padding: 20px;
-  flex: 1;           /* Take up all remaining space */
-  overflow-y: auto;  /* ENABLE SCROLLING HERE */
-  
-  /* Custom Scrollbar for Chrome/Safari/Edge */
-  scrollbar-width: thin;
-  scrollbar-color: #475569 #0f172a;
+  flex: 1;
+  overflow-y: auto; /* Scrollable content */
+  padding-bottom: 20px;
+  background-color: #0f172a;
 }
 
-/* Custom Scrollbar Styling */
-.content-area::-webkit-scrollbar {
-  width: 6px;
-}
-.content-area::-webkit-scrollbar-track {
-  background: #0f172a;
-}
-.content-area::-webkit-scrollbar-thumb {
-  background-color: #475569;
-  border-radius: 20px;
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-top: 20px;
 }
 
-/* Cards (Menu and Games) */
-.card {
-  background-color: #334155;
+/* --- INPUTS & FORMS --- */
+.input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+input, select {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  color: white;
+  padding: 12px;
   border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
+  font-size: 1rem;
+  outline: none;
+}
+
+input { flex: 1; }
+
+.input-group button {
+  background-color: #a855f7;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  width: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* --- CARDS --- */
+.card {
+  background-color: #1e293b;
+  padding: 15px;
+  border-radius: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #475569;
-  transition: transform 0.1s;
-}
-.card:active {
-  transform: scale(0.99);
+  border: 1px solid #334155;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.card-info h3 { margin: 0 0 5px; font-size: 1.1rem; }
-.card-info p { margin: 5px 0 0; color: #cbd5e1; font-size: 0.85rem; }
-
+.card h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
+.card p { margin: 0; font-size: 0.85rem; color: #94a3b8; }
 .badge {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  background: #0f172a;
-  padding: 3px 8px;
-  border-radius: 12px;
-  color: #94a3b8;
-  letter-spacing: 0.5px;
-  font-weight: bold;
+  background-color: #334155;
+  color: #cbd5e1;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
 }
 
-/* Vote Buttons */
 .vote-btn {
-  background-color: #1e293b;
-  border: 1px solid #475569;
+  background-color: #334155;
+  border: none;
   color: white;
-  min-width: 50px;
-  height: 50px;
+  padding: 8px 12px;
   border-radius: 12px;
-  cursor: pointer;
   font-weight: bold;
-  margin-left: 12px;
-  transition: background 0.2s;
+  cursor: pointer;
+  min-width: 60px;
+}
+
+.vote-btn.voted {
+  background-color: #10b981; /* Green */
+}
+
+/* --- CHAT --- */
+.chat-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
-  font-size: 0.9rem;
-}
-.vote-btn:hover { background-color: #475569; }
-
-/* Input Form */
-.input-group {
-  display: flex;
   gap: 10px;
-  margin-bottom: 20px;
-  position: sticky;
-  top: 0;                  /* Stick to the very top */
-  background-color: #0f172a; /* Match background to hide scroll content behind it */
-  padding: 15px 0;         /* More breathing room */
-  z-index: 10;
-  border-bottom: 1px solid #1e293b; /* Subtle line to separate from list */
+  padding: 15px;
+  height: calc(100vh - 250px);
+  overflow-y: auto;
 }
 
-.input-group input {
-  flex: 1;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #475569;
-  background-color: #1e293b;
+.message-bubble {
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 80%;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.message-mine {
+  background-color: #a855f7;
   color: white;
-  font-size: 1rem;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); /* Inner shadow for depth */
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
 }
 
-.input-group input::placeholder {
-  color: #64748b; /* Lighter placeholder text */
+.message-other {
+  background-color: #334155;
+  color: #e2e8f0;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
 }
 
-/* Seed Button */
-.seed-btn {
-  width: 100%;
-  padding: 24px;
-  background: none;
-  border: 2px dashed #475569;
-  color: #94a3b8;
+.message-sender {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 10px;
+  background-color: #1e293b;
+  border-top: 1px solid #334155;
+}
+
+.send-btn {
+  background-color: #a855f7;
+  border: none;
+  color: white;
+  padding: 0 20px;
   border-radius: 12px;
+  margin-left: 8px;
   cursor: pointer;
-  margin-top: 20px;
 }
-.seed-btn:hover {
-  border-color: #818cf8;
-  color: #818cf8;
-  background-color: rgba(129, 140, 248, 0.05);
-}
-/* ... existing code ... */
 
-/* LOGIN SCREEN */
-/* 1. The Full Page Wrapper */
-/* --- LOGIN SCREEN (FIXED) --- */
-
+/* --- LOGIN SCREEN --- */
 .login-screen {
-  flex: 1;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
   background-color: #0f172a;
 }
 
 .login-content {
-  width: 100%;
-  max-width: 320px;       /* This controls the card width */
-  background-color: #1e293b;
-  padding: 30px;
-  border-radius: 24px;
-  border: 1px solid #334155;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
   text-align: center;
+  background-color: #1e293b;
+  padding: 40px;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 350px;
+  border: 1px solid #334155;
 }
 
-/* Icons and Text */
-.login-icon { font-size: 3rem; display: block; margin-bottom: 15px; }
-.login-content h2 { margin: 0 0 10px 0; color: white; font-size: 1.8rem; }
-.login-hint { margin: 0 0 25px 0; color: #94a3b8; font-size: 0.95rem; }
-
-/* Form Container */
-.login-form {
-  width: 100%;           /* Fill the card */
-  display: flex;
-  flex-direction: column;
-  gap: 12px;             /* Space between Input and Button */
-}
-
-/* Input Field */
-.login-input {
-  width: 100%;           /* Force full width */
-  padding: 16px;         /* Standard padding */
-  box-sizing: border-box; /* Includes padding in width calculation */
-  
-  text-align: left;      /* Force text to left */
-  
-  border-radius: 12px;
-  border: 1px solid #475569;
-  background-color: #0f172a;
-  color: white;
-  font-size: 1rem;
-}
-
-.login-input:focus {
-  outline: 2px solid #4f46e5;
-  border-color: transparent;
-}
-
-/* Button */
+.login-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
+.login-input { width: 100%; margin: 20px 0; box-sizing: border-box; }
 .join-btn {
-  width: 100%;           /* Force full width (matches input) */
-  padding: 16px;
-  box-sizing: border-box; /* Includes padding in width calculation */
-  
+  width: 100%;
+  padding: 15px;
   background-color: #10b981;
   color: white;
   border: none;
@@ -305,124 +282,31 @@ body {
   font-weight: bold;
   cursor: pointer;
 }
-.join-btn:hover { background-color: #059669; }
 
-/* CATEGORY SELECTOR (For Menu) */
-.category-select {
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #475569;
-  background-color: #1e293b;
-  color: white;
-  cursor: pointer;
-}
-
-/* --- CHAT TAB --- */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: 80px; /* Space for the input box at bottom */
-}
-
-.message-bubble {
-  max-width: 80%;
-  padding: 10px 14px;
-  border-radius: 16px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  position: relative;
-  word-wrap: break-word;
-}
-
-/* Messages from ME (Green, Right side) */
-.message-mine {
-  align-self: flex-end;
-  background-color: #10b981; /* Emerald Green */
-  color: white;
-  border-bottom-right-radius: 4px; /* subtle "tail" effect */
-}
-
-/* Messages from OTHERS (Grey, Left side) */
-.message-other {
-  align-self: flex-start;
-  background-color: #334155; /* Slate Grey */
-  color: #f1f5f9;
-  border-bottom-left-radius: 4px;
-}
-
-.message-sender {
-  font-size: 0.75rem;
-  margin-bottom: 4px;
-  opacity: 0.7;
-  display: block;
-}
-
-/* Chat Input Area (Sticks to bottom) */
-.chat-input-area {
-  position: fixed; /* Floats above content */
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%); /* Centers it relative to screen */
-  width: 100%;
-  max-width: 600px; /* Matches app-container max-width */
-  
-  padding: 15px;
-  background-color: #0f172a; /* Match background */
-  border-top: 1px solid #334155;
-  display: flex;
-  gap: 10px;
-  border-bottom-left-radius: 20px; /* Match card corners if on desktop */
-  border-bottom-right-radius: 20px;
-}
-
-.chat-input-area input {
-  flex: 1;
-  padding: 12px;
-  border-radius: 20px;
-  border: 1px solid #475569;
-  background-color: #1e293b;
-  color: white;
-  outline: none;
-}
-
-.send-btn {
-  background-color: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 50%; /* Circle button */
-  width: 45px;
-  height: 45px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Runoff Button */
+/* --- BUTTONS --- */
 .runoff-btn {
   width: 100%;
   margin-top: 20px;
-  padding: 15px;
-  background-color: #7c3aed; /* Violet */
-  color: white;
+  padding: 12px;
+  background-color: #f59e0b; /* Amber */
+  color: black;
   border: none;
   border-radius: 12px;
   font-weight: bold;
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-  transition: transform 0.2s;
+  gap: 8px;
+  cursor: pointer;
 }
 
-.runoff-btn:hover {
-  background-color: #6d28d9;
-  transform: translateY(-2px);
-}
-.runoff-btn:active {
-  transform: scale(0.98);
+.seed-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px dashed #475569;
+  color: #94a3b8;
+  border-radius: 12px;
+  cursor: pointer;
 }
