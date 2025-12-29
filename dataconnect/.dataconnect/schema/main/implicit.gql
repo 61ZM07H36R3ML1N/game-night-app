@@ -1,24 +1,8 @@
-extend type FoodItem {
-  """
-  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
-  """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "FoodItem", purpose: IMPLICIT_KEY_FIELD)
-}
-extend type Game {
-  """
-  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
-  """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Game", purpose: IMPLICIT_KEY_FIELD)
-}
 extend type GameNight {
-  """
-  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
-  """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "GameNight", purpose: IMPLICIT_KEY_FIELD)
   """
   ✨ Implicit foreign key field based on `GameNight`.`creator`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  creatorId: UUID! @fdc_generated(from: "GameNight.creator", purpose: IMPLICIT_REF_FIELD)
+  creatorId: String! @fdc_generated(from: "GameNight.creator", purpose: IMPLICIT_REF_FIELD)
 }
 extend type GameNightInvitation {
   """
@@ -26,49 +10,23 @@ extend type GameNightInvitation {
   """
   gameNightId: UUID! @fdc_generated(from: "GameNightInvitation.gameNight", purpose: IMPLICIT_REF_FIELD)
   """
-  ✨ Implicit foreign key field based on `GameNightInvitation`.`invitee`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `GameNightInvitation`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  inviteeId: UUID! @fdc_generated(from: "GameNightInvitation.invitee", purpose: IMPLICIT_REF_FIELD)
+  userId: String! @fdc_generated(from: "GameNightInvitation.user", purpose: IMPLICIT_REF_FIELD)
 }
 extend type GameNightProposal {
-  """
-  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
-  """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "GameNightProposal", purpose: IMPLICIT_KEY_FIELD)
-  """
-  ✨ Implicit foreign key field based on `GameNightProposal`.`foodItem`. It must match the value of `FoodItem`.`id`. See `@ref` for how to customize it.
-  """
-  foodItemId: UUID @fdc_generated(from: "GameNightProposal.foodItem", purpose: IMPLICIT_REF_FIELD)
-  """
-  ✨ Implicit foreign key field based on `GameNightProposal`.`game`. It must match the value of `Game`.`id`. See `@ref` for how to customize it.
-  """
-  gameId: UUID @fdc_generated(from: "GameNightProposal.game", purpose: IMPLICIT_REF_FIELD)
   """
   ✨ Implicit foreign key field based on `GameNightProposal`.`gameNight`. It must match the value of `GameNight`.`id`. See `@ref` for how to customize it.
   """
   gameNightId: UUID! @fdc_generated(from: "GameNightProposal.gameNight", purpose: IMPLICIT_REF_FIELD)
   """
-  ✨ Implicit foreign key field based on `GameNightProposal`.`proposer`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `GameNightProposal`.`suggestion`. It must match the value of `GameSuggestion`.`id`. See `@ref` for how to customize it.
   """
-  proposerId: UUID! @fdc_generated(from: "GameNightProposal.proposer", purpose: IMPLICIT_REF_FIELD)
+  suggestionId: UUID! @fdc_generated(from: "GameNightProposal.suggestion", purpose: IMPLICIT_REF_FIELD)
 }
-extend type User {
+extend type GameSuggestion {
   """
-  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  ✨ Implicit foreign key field based on `GameSuggestion`.`suggestedBy`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "User", purpose: IMPLICIT_KEY_FIELD)
-}
-extend type Vote {
-  """
-  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
-  """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Vote", purpose: IMPLICIT_KEY_FIELD)
-  """
-  ✨ Implicit foreign key field based on `Vote`.`gameNightProposal`. It must match the value of `GameNightProposal`.`id`. See `@ref` for how to customize it.
-  """
-  gameNightProposalId: UUID! @fdc_generated(from: "Vote.gameNightProposal", purpose: IMPLICIT_REF_FIELD)
-  """
-  ✨ Implicit foreign key field based on `Vote`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
-  """
-  userId: UUID! @fdc_generated(from: "Vote.user", purpose: IMPLICIT_REF_FIELD)
+  suggestedById: String! @fdc_generated(from: "GameSuggestion.suggestedBy", purpose: IMPLICIT_REF_FIELD)
 }

@@ -1,23 +1,5 @@
 extend type Mutation {
   """
-  ✨ Insert a single `FoodItem` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
-  """
-  foodItem_insert(
-    """
-    Data object to insert into the table.
-    """
-    data: FoodItem_Data!
-  ): FoodItem_KeyOutput! @fdc_generated(from: "FoodItem", purpose: INSERT_SINGLE)
-  """
-  ✨ Insert a single `Game` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
-  """
-  game_insert(
-    """
-    Data object to insert into the table.
-    """
-    data: Game_Data!
-  ): Game_KeyOutput! @fdc_generated(from: "Game", purpose: INSERT_SINGLE)
-  """
   ✨ Insert a single `GameNight` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   gameNight_insert(
@@ -45,6 +27,15 @@ extend type Mutation {
     data: GameNightProposal_Data!
   ): GameNightProposal_KeyOutput! @fdc_generated(from: "GameNightProposal", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `GameSuggestion` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  gameSuggestion_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: GameSuggestion_Data!
+  ): GameSuggestion_KeyOutput! @fdc_generated(from: "GameSuggestion", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   user_insert(
@@ -53,33 +44,6 @@ extend type Mutation {
     """
     data: User_Data!
   ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
-  """
-  ✨ Insert a single `Vote` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
-  """
-  vote_insert(
-    """
-    Data object to insert into the table.
-    """
-    data: Vote_Data!
-  ): Vote_KeyOutput! @fdc_generated(from: "Vote", purpose: INSERT_SINGLE)
-  """
-  ✨ Insert `FoodItem` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
-  """
-  foodItem_insertMany(
-    """
-    List of data objects to insert into the table.
-    """
-    data: [FoodItem_Data!]!
-  ): [FoodItem_KeyOutput!]! @fdc_generated(from: "FoodItem", purpose: INSERT_MULTIPLE)
-  """
-  ✨ Insert `Game` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
-  """
-  game_insertMany(
-    """
-    List of data objects to insert into the table.
-    """
-    data: [Game_Data!]!
-  ): [Game_KeyOutput!]! @fdc_generated(from: "Game", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `GameNight` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -108,6 +72,15 @@ extend type Mutation {
     data: [GameNightProposal_Data!]!
   ): [GameNightProposal_KeyOutput!]! @fdc_generated(from: "GameNightProposal", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert `GameSuggestion` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  gameSuggestion_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [GameSuggestion_Data!]!
+  ): [GameSuggestion_KeyOutput!]! @fdc_generated(from: "GameSuggestion", purpose: INSERT_MULTIPLE)
+  """
   ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   user_insertMany(
@@ -116,33 +89,6 @@ extend type Mutation {
     """
     data: [User_Data!]!
   ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
-  """
-  ✨ Insert `Vote` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
-  """
-  vote_insertMany(
-    """
-    List of data objects to insert into the table.
-    """
-    data: [Vote_Data!]!
-  ): [Vote_KeyOutput!]! @fdc_generated(from: "Vote", purpose: INSERT_MULTIPLE)
-  """
-  ✨ Insert or update a single `FoodItem` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FoodItem`.
-  """
-  foodItem_upsert(
-    """
-    Data object to insert or update if it already exists.
-    """
-    data: FoodItem_Data!
-  ): FoodItem_KeyOutput! @fdc_generated(from: "FoodItem", purpose: UPSERT_SINGLE)
-  """
-  ✨ Insert or update a single `Game` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Game`.
-  """
-  game_upsert(
-    """
-    Data object to insert or update if it already exists.
-    """
-    data: Game_Data!
-  ): Game_KeyOutput! @fdc_generated(from: "Game", purpose: UPSERT_SINGLE)
   """
   ✨ Insert or update a single `GameNight` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `GameNight`.
   """
@@ -171,6 +117,15 @@ extend type Mutation {
     data: GameNightProposal_Data!
   ): GameNightProposal_KeyOutput! @fdc_generated(from: "GameNightProposal", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `GameSuggestion` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `GameSuggestion`.
+  """
+  gameSuggestion_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: GameSuggestion_Data!
+  ): GameSuggestion_KeyOutput! @fdc_generated(from: "GameSuggestion", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
   """
   user_upsert(
@@ -179,33 +134,6 @@ extend type Mutation {
     """
     data: User_Data!
   ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
-  """
-  ✨ Insert or update a single `Vote` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Vote`.
-  """
-  vote_upsert(
-    """
-    Data object to insert or update if it already exists.
-    """
-    data: Vote_Data!
-  ): Vote_KeyOutput! @fdc_generated(from: "Vote", purpose: UPSERT_SINGLE)
-  """
-  ✨ Insert or update `FoodItem` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FoodItem`.
-  """
-  foodItem_upsertMany(
-    """
-    List of data objects to insert or update if it already exists.
-    """
-    data: [FoodItem_Data!]!
-  ): [FoodItem_KeyOutput!]! @fdc_generated(from: "FoodItem", purpose: UPSERT_MULTIPLE)
-  """
-  ✨ Insert or update `Game` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Game`.
-  """
-  game_upsertMany(
-    """
-    List of data objects to insert or update if it already exists.
-    """
-    data: [Game_Data!]!
-  ): [Game_KeyOutput!]! @fdc_generated(from: "Game", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `GameNight` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `GameNight`.
   """
@@ -234,6 +162,15 @@ extend type Mutation {
     data: [GameNightProposal_Data!]!
   ): [GameNightProposal_KeyOutput!]! @fdc_generated(from: "GameNightProposal", purpose: UPSERT_MULTIPLE)
   """
+  ✨ Insert or update `GameSuggestion` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `GameSuggestion`.
+  """
+  gameSuggestion_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [GameSuggestion_Data!]!
+  ): [GameSuggestion_KeyOutput!]! @fdc_generated(from: "GameSuggestion", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
   """
   user_upsertMany(
@@ -242,63 +179,6 @@ extend type Mutation {
     """
     data: [User_Data!]!
   ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
-  """
-  ✨ Insert or update `Vote` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Vote`.
-  """
-  vote_upsertMany(
-    """
-    List of data objects to insert or update if it already exists.
-    """
-    data: [Vote_Data!]!
-  ): [Vote_KeyOutput!]! @fdc_generated(from: "Vote", purpose: UPSERT_MULTIPLE)
-  """
-  ✨ Update a single `FoodItem` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `FoodItem` or `null` if not found.
-  """
-  foodItem_update(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: FoodItem_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: FoodItem_FirstRow
-
-    """
-    Data object containing fields to be updated.
-    """
-    data: FoodItem_Data!
-  ): FoodItem_KeyOutput @fdc_generated(from: "FoodItem", purpose: UPDATE_SINGLE)
-  """
-  ✨ Update a single `Game` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Game` or `null` if not found.
-  """
-  game_update(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Game_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Game_FirstRow
-
-    """
-    Data object containing fields to be updated.
-    """
-    data: Game_Data!
-  ): Game_KeyOutput @fdc_generated(from: "Game", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `GameNight` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `GameNight` or `null` if not found.
   """
@@ -328,6 +208,11 @@ extend type Mutation {
   """
   gameNightInvitation_update(
     """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
     The key used to identify the object.
     """
     key: GameNightInvitation_Key
@@ -347,11 +232,6 @@ extend type Mutation {
   """
   gameNightProposal_update(
     """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
     The key used to identify the object.
     """
     key: GameNightProposal_Key
@@ -367,13 +247,42 @@ extend type Mutation {
     data: GameNightProposal_Data!
   ): GameNightProposal_KeyOutput @fdc_generated(from: "GameNightProposal", purpose: UPDATE_SINGLE)
   """
+  ✨ Update a single `GameSuggestion` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `GameSuggestion` or `null` if not found.
+  """
+  gameSuggestion_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: GameSuggestion_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: GameSuggestion_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: GameSuggestion_Data!
+  ): GameSuggestion_KeyOutput @fdc_generated(from: "GameSuggestion", purpose: UPDATE_SINGLE)
+  """
   ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
   """
   user_update(
     """
     The unique ID of the object.
     """
-    id: UUID
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
 
     """
     The key used to identify the object.
@@ -390,68 +299,6 @@ extend type Mutation {
     """
     data: User_Data!
   ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
-  """
-  ✨ Update a single `Vote` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Vote` or `null` if not found.
-  """
-  vote_update(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Vote_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Vote_FirstRow
-
-    """
-    Data object containing fields to be updated.
-    """
-    data: Vote_Data!
-  ): Vote_KeyOutput @fdc_generated(from: "Vote", purpose: UPDATE_SINGLE)
-  """
-  ✨ Update `FoodItem` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
-  """
-  foodItem_updateMany(
-    """
-    Filter condition to specify which rows to update.
-    """
-    where: FoodItem_Filter
-
-    """
-    Set to true to update all rows.
-    """
-    all: Boolean = false
-
-    """
-    Data object containing fields to update.
-    """
-    data: FoodItem_Data!
-  ): Int! @fdc_generated(from: "FoodItem", purpose: UPDATE_MULTIPLE)
-  """
-  ✨ Update `Game` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
-  """
-  game_updateMany(
-    """
-    Filter condition to specify which rows to update.
-    """
-    where: Game_Filter
-
-    """
-    Set to true to update all rows.
-    """
-    all: Boolean = false
-
-    """
-    Data object containing fields to update.
-    """
-    data: Game_Data!
-  ): Int! @fdc_generated(from: "Game", purpose: UPDATE_MULTIPLE)
   """
   ✨ Update `GameNight` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
@@ -510,6 +357,25 @@ extend type Mutation {
     data: GameNightProposal_Data!
   ): Int! @fdc_generated(from: "GameNightProposal", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Update `GameSuggestion` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  gameSuggestion_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: GameSuggestion_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: GameSuggestion_Data!
+  ): Int! @fdc_generated(from: "GameSuggestion", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   user_updateMany(
@@ -528,63 +394,6 @@ extend type Mutation {
     """
     data: User_Data!
   ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
-  """
-  ✨ Update `Vote` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
-  """
-  vote_updateMany(
-    """
-    Filter condition to specify which rows to update.
-    """
-    where: Vote_Filter
-
-    """
-    Set to true to update all rows.
-    """
-    all: Boolean = false
-
-    """
-    Data object containing fields to update.
-    """
-    data: Vote_Data!
-  ): Int! @fdc_generated(from: "Vote", purpose: UPDATE_MULTIPLE)
-  """
-  ✨ Delete a single `FoodItem` based on `id`, `key` or `first` and return its key (or `null` if not found).
-  """
-  foodItem_delete(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: FoodItem_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: FoodItem_FirstRow
-  ): FoodItem_KeyOutput @fdc_generated(from: "FoodItem", purpose: DELETE_SINGLE)
-  """
-  ✨ Delete a single `Game` based on `id`, `key` or `first` and return its key (or `null` if not found).
-  """
-  game_delete(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Game_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Game_FirstRow
-  ): Game_KeyOutput @fdc_generated(from: "Game", purpose: DELETE_SINGLE)
   """
   ✨ Delete a single `GameNight` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -609,6 +418,11 @@ extend type Mutation {
   """
   gameNightInvitation_delete(
     """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
     The key used to identify the object.
     """
     key: GameNightInvitation_Key
@@ -623,11 +437,6 @@ extend type Mutation {
   """
   gameNightProposal_delete(
     """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
     The key used to identify the object.
     """
     key: GameNightProposal_Key
@@ -638,13 +447,37 @@ extend type Mutation {
     first: GameNightProposal_FirstRow
   ): GameNightProposal_KeyOutput @fdc_generated(from: "GameNightProposal", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `GameSuggestion` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  gameSuggestion_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: GameSuggestion_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: GameSuggestion_FirstRow
+  ): GameSuggestion_KeyOutput @fdc_generated(from: "GameSuggestion", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   user_delete(
     """
     The unique ID of the object.
     """
-    id: UUID
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
 
     """
     The key used to identify the object.
@@ -656,53 +489,6 @@ extend type Mutation {
     """
     first: User_FirstRow
   ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
-  """
-  ✨ Delete a single `Vote` based on `id`, `key` or `first` and return its key (or `null` if not found).
-  """
-  vote_delete(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Vote_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Vote_FirstRow
-  ): Vote_KeyOutput @fdc_generated(from: "Vote", purpose: DELETE_SINGLE)
-  """
-  ✨ Delete `FoodItem` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
-  """
-  foodItem_deleteMany(
-    """
-    Filter condition to specify which rows to delete.
-    """
-    where: FoodItem_Filter
-
-    """
-    Set to true to delete all rows.
-    """
-    all: Boolean = false
-  ): Int! @fdc_generated(from: "FoodItem", purpose: DELETE_MULTIPLE)
-  """
-  ✨ Delete `Game` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
-  """
-  game_deleteMany(
-    """
-    Filter condition to specify which rows to delete.
-    """
-    where: Game_Filter
-
-    """
-    Set to true to delete all rows.
-    """
-    all: Boolean = false
-  ): Int! @fdc_generated(from: "Game", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `GameNight` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
@@ -746,6 +532,20 @@ extend type Mutation {
     all: Boolean = false
   ): Int! @fdc_generated(from: "GameNightProposal", purpose: DELETE_MULTIPLE)
   """
+  ✨ Delete `GameSuggestion` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  gameSuggestion_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: GameSuggestion_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "GameSuggestion", purpose: DELETE_MULTIPLE)
+  """
   ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
   user_deleteMany(
@@ -759,18 +559,4 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
-  """
-  ✨ Delete `Vote` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
-  """
-  vote_deleteMany(
-    """
-    Filter condition to specify which rows to delete.
-    """
-    where: Vote_Filter
-
-    """
-    Set to true to delete all rows.
-    """
-    all: Boolean = false
-  ): Int! @fdc_generated(from: "Vote", purpose: DELETE_MULTIPLE)
 }

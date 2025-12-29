@@ -1,257 +1,3 @@
-extend type FoodItem {
-  """
-  ✨ List `GameNightProposal` objects in a one-to-many relationship (where `GameNightProposal`.`foodItem` is this object).
-  """
-  gameNightProposals_on_foodItem(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: GameNightProposal_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [GameNightProposal_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: GameNightProposal_Having
-  ): [GameNightProposal!]! @fdc_generated(from: "GameNightProposal.foodItem", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
-  """
-  Implicit metadata field that cannot be written. It provides extra information about query results.
-  """
-  _metadata: _Metadata @fdc_generated(from: "FoodItem", purpose: METADATA_FIELD)
-  """
-  ✨ Count the number of rows in the `FoodItem` table.
-  """
-  _count: Int! @fdc_generated(from: "FoodItem.", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `FoodItem` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  createdAt_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "FoodItem.createdAt", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `FoodItem` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  description_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "FoodItem.description", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `FoodItem` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  id_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "FoodItem.id", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `FoodItem` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  name_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "FoodItem.name", purpose: QUERY_COUNT)
-  """
-  ✨ Minimum of the `createdAt` field in the `FoodItem` table.
-  """
-  createdAt_min: Timestamp @fdc_generated(from: "FoodItem.createdAt", purpose: QUERY_MIN)
-  """
-  ✨ Maximum of the `createdAt` field in the `FoodItem` table.
-  """
-  createdAt_max: Timestamp @fdc_generated(from: "FoodItem.createdAt", purpose: QUERY_MAX)
-  """
-  A generated field that is used for caching results in SDKs.
-  """
-  _id: ID! @fdc_generated(from: "FoodItem.id", purpose: GLOBAL_ID)
-}
-extend type Game {
-  """
-  ✨ List `GameNightProposal` objects in a one-to-many relationship (where `GameNightProposal`.`game` is this object).
-  """
-  gameNightProposals_on_game(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: GameNightProposal_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [GameNightProposal_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: GameNightProposal_Having
-  ): [GameNightProposal!]! @fdc_generated(from: "GameNightProposal.game", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
-  """
-  Implicit metadata field that cannot be written. It provides extra information about query results.
-  """
-  _metadata: _Metadata @fdc_generated(from: "Game", purpose: METADATA_FIELD)
-  """
-  ✨ Count the number of rows in the `Game` table.
-  """
-  _count: Int! @fdc_generated(from: "Game.", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Game` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  createdAt_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Game.createdAt", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Game` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  description_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Game.description", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Game` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  id_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Game.id", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Game` table where the `maxPlayers` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  maxPlayers_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Game.maxPlayers", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Game` table where the `minPlayers` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  minPlayers_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Game.minPlayers", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Game` table where the `title` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  title_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Game.title", purpose: QUERY_COUNT)
-  """
-  ✨ Sum the `maxPlayers` field in the `Game` table.
-  """
-  maxPlayers_sum(
-    """
-    Set to true to sum the distinct values.
-    """
-    distinct: Boolean = false
-  ): Int @fdc_generated(from: "Game.maxPlayers", purpose: QUERY_SUM)
-  """
-  ✨ Sum the `minPlayers` field in the `Game` table.
-  """
-  minPlayers_sum(
-    """
-    Set to true to sum the distinct values.
-    """
-    distinct: Boolean = false
-  ): Int @fdc_generated(from: "Game.minPlayers", purpose: QUERY_SUM)
-  """
-  ✨ Average the `maxPlayers` field in the `Game` table.
-  """
-  maxPlayers_avg(
-    """
-    Set to true to average the distinct values.
-    """
-    distinct: Boolean = false
-  ): Float @fdc_generated(from: "Game.maxPlayers", purpose: QUERY_AVG)
-  """
-  ✨ Average the `minPlayers` field in the `Game` table.
-  """
-  minPlayers_avg(
-    """
-    Set to true to average the distinct values.
-    """
-    distinct: Boolean = false
-  ): Float @fdc_generated(from: "Game.minPlayers", purpose: QUERY_AVG)
-  """
-  ✨ Minimum of the `createdAt` field in the `Game` table.
-  """
-  createdAt_min: Timestamp @fdc_generated(from: "Game.createdAt", purpose: QUERY_MIN)
-  """
-  ✨ Minimum of the `maxPlayers` field in the `Game` table.
-  """
-  maxPlayers_min: Int @fdc_generated(from: "Game.maxPlayers", purpose: QUERY_MIN)
-  """
-  ✨ Minimum of the `minPlayers` field in the `Game` table.
-  """
-  minPlayers_min: Int @fdc_generated(from: "Game.minPlayers", purpose: QUERY_MIN)
-  """
-  ✨ Maximum of the `createdAt` field in the `Game` table.
-  """
-  createdAt_max: Timestamp @fdc_generated(from: "Game.createdAt", purpose: QUERY_MAX)
-  """
-  ✨ Maximum of the `maxPlayers` field in the `Game` table.
-  """
-  maxPlayers_max: Int @fdc_generated(from: "Game.maxPlayers", purpose: QUERY_MAX)
-  """
-  ✨ Maximum of the `minPlayers` field in the `Game` table.
-  """
-  minPlayers_max: Int @fdc_generated(from: "Game.minPlayers", purpose: QUERY_MAX)
-  """
-  A generated field that is used for caching results in SDKs.
-  """
-  _id: ID! @fdc_generated(from: "Game.id", purpose: GLOBAL_ID)
-}
 extend type GameNight {
   """
   ✨ List `GameNightInvitation` objects in a one-to-many relationship (where `GameNightInvitation`.`gameNight` is this object).
@@ -322,18 +68,18 @@ extend type GameNight {
     having: GameNightProposal_Having
   ): [GameNightProposal!]! @fdc_generated(from: "GameNightProposal.gameNight", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
-  ✨ List `User` objects using `GameNightInvitation` as the join table (a `GameNightInvitation` object exists where its `gameNight` is this and its `invitee` is that).
+  ✨ List `GameSuggestion` objects using `GameNightProposal` as the join table (a `GameNightProposal` object exists where its `gameNight` is this and its `suggestion` is that).
   """
-  users_via_GameNightInvitation(
+  gameSuggestions_via_GameNightProposal(
     """
     Filter condition to narrow down the query results.
     """
-    where: GameNightInvitation_Filter
+    where: GameNightProposal_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [GameNightInvitation_Order!]
+    orderBy: [GameNightProposal_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -353,8 +99,8 @@ extend type GameNight {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: GameNightInvitation_Having
-  ): [User!]! @fdc_generated(from: "GameNightInvitation", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+    having: GameNightProposal_Having
+  ): [GameSuggestion!]! @fdc_generated(from: "GameNightProposal", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
@@ -484,14 +230,14 @@ extend type GameNightInvitation {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "GameNightInvitation.gameNightId", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `GameNightInvitation` table where the `inviteeId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `GameNightInvitation` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
-  inviteeId_count(
+  id_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "GameNightInvitation.inviteeId", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "GameNightInvitation.id", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `GameNightInvitation` table where the `status` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
@@ -501,6 +247,15 @@ extend type GameNightInvitation {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "GameNightInvitation.status", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GameNightInvitation` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GameNightInvitation.userId", purpose: QUERY_COUNT)
   """
   ✨ Minimum of the `createdAt` field in the `GameNightInvitation` table.
   """
@@ -512,22 +267,71 @@ extend type GameNightInvitation {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "GameNightInvitation.gameNightId,inviteeId", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "GameNightInvitation.id", purpose: GLOBAL_ID)
 }
 extend type GameNightProposal {
   """
-  ✨ List `Vote` objects in a one-to-many relationship (where `Vote`.`gameNightProposal` is this object).
+  Implicit metadata field that cannot be written. It provides extra information about query results.
   """
-  votes_on_gameNightProposal(
+  _metadata: _Metadata @fdc_generated(from: "GameNightProposal", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `GameNightProposal` table.
+  """
+  _count: Int! @fdc_generated(from: "GameNightProposal.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GameNightProposal` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GameNightProposal.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GameNightProposal` table where the `gameNightId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  gameNightId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GameNightProposal.gameNightId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GameNightProposal` table where the `suggestionId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  suggestionId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GameNightProposal.suggestionId", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `GameNightProposal` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "GameNightProposal.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `GameNightProposal` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "GameNightProposal.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "GameNightProposal.gameNightId,suggestionId", purpose: GLOBAL_ID)
+}
+extend type GameSuggestion {
+  """
+  ✨ List `GameNightProposal` objects in a one-to-many relationship (where `GameNightProposal`.`suggestion` is this object).
+  """
+  gameNightProposals_on_suggestion(
     """
     Filter condition to narrow down the query results.
     """
-    where: Vote_Filter
+    where: GameNightProposal_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [Vote_Order!]
+    orderBy: [GameNightProposal_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -547,91 +351,133 @@ extend type GameNightProposal {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: Vote_Having
-  ): [Vote!]! @fdc_generated(from: "Vote.gameNightProposal", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+    having: GameNightProposal_Having
+  ): [GameNightProposal!]! @fdc_generated(from: "GameNightProposal.suggestion", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `GameNight` objects using `GameNightProposal` as the join table (a `GameNightProposal` object exists where its `suggestion` is this and its `gameNight` is that).
+  """
+  gameNights_via_GameNightProposal(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: GameNightProposal_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [GameNightProposal_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: GameNightProposal_Having
+  ): [GameNight!]! @fdc_generated(from: "GameNightProposal", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
-  _metadata: _Metadata @fdc_generated(from: "GameNightProposal", purpose: METADATA_FIELD)
+  _metadata: _Metadata @fdc_generated(from: "GameSuggestion", purpose: METADATA_FIELD)
   """
-  ✨ Count the number of rows in the `GameNightProposal` table.
+  ✨ Count the number of rows in the `GameSuggestion` table.
   """
-  _count: Int! @fdc_generated(from: "GameNightProposal.", purpose: QUERY_COUNT)
+  _count: Int! @fdc_generated(from: "GameSuggestion.", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `GameNightProposal` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `GameSuggestion` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   createdAt_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "GameNightProposal.createdAt", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "GameSuggestion.createdAt", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `GameNightProposal` table where the `foodItemId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  foodItemId_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "GameNightProposal.foodItemId", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `GameNightProposal` table where the `gameId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  gameId_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "GameNightProposal.gameId", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `GameNightProposal` table where the `gameNightId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  gameNightId_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "GameNightProposal.gameNightId", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `GameNightProposal` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `GameSuggestion` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   id_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "GameNightProposal.id", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "GameSuggestion.id", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `GameNightProposal` table where the `proposerId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `GameSuggestion` table where the `suggestedById` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
-  proposerId_count(
+  suggestedById_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "GameNightProposal.proposerId", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "GameSuggestion.suggestedById", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `GameNightProposal` table where the `type` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `GameSuggestion` table where the `title` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
-  type_count(
+  title_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "GameNightProposal.type", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "GameSuggestion.title", purpose: QUERY_COUNT)
   """
-  ✨ Minimum of the `createdAt` field in the `GameNightProposal` table.
+  ✨ Count the number of rows in the `GameSuggestion` table where the `votes` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
-  createdAt_min: Timestamp @fdc_generated(from: "GameNightProposal.createdAt", purpose: QUERY_MIN)
+  votes_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GameSuggestion.votes", purpose: QUERY_COUNT)
   """
-  ✨ Maximum of the `createdAt` field in the `GameNightProposal` table.
+  ✨ Sum the `votes` field in the `GameSuggestion` table.
   """
-  createdAt_max: Timestamp @fdc_generated(from: "GameNightProposal.createdAt", purpose: QUERY_MAX)
+  votes_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "GameSuggestion.votes", purpose: QUERY_SUM)
+  """
+  ✨ Average the `votes` field in the `GameSuggestion` table.
+  """
+  votes_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "GameSuggestion.votes", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `createdAt` field in the `GameSuggestion` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "GameSuggestion.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `votes` field in the `GameSuggestion` table.
+  """
+  votes_min: Int @fdc_generated(from: "GameSuggestion.votes", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `GameSuggestion` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "GameSuggestion.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `votes` field in the `GameSuggestion` table.
+  """
+  votes_max: Int @fdc_generated(from: "GameSuggestion.votes", purpose: QUERY_MAX)
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "GameNightProposal.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "GameSuggestion.id", purpose: GLOBAL_ID)
 }
 extend type User {
   """
@@ -669,9 +515,9 @@ extend type User {
     having: GameNight_Having
   ): [GameNight!]! @fdc_generated(from: "GameNight.creator", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
-  ✨ List `GameNightInvitation` objects in a one-to-many relationship (where `GameNightInvitation`.`invitee` is this object).
+  ✨ List `GameNightInvitation` objects in a one-to-many relationship (where `GameNightInvitation`.`user` is this object).
   """
-  gameNightInvitations_on_invitee(
+  gameNightInvitations_on_user(
     """
     Filter condition to narrow down the query results.
     """
@@ -701,20 +547,20 @@ extend type User {
     Filter condition to apply to the groups of aggregate queries.
     """
     having: GameNightInvitation_Having
-  ): [GameNightInvitation!]! @fdc_generated(from: "GameNightInvitation.invitee", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  ): [GameNightInvitation!]! @fdc_generated(from: "GameNightInvitation.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
-  ✨ List `GameNightProposal` objects in a one-to-many relationship (where `GameNightProposal`.`proposer` is this object).
+  ✨ List `GameSuggestion` objects in a one-to-many relationship (where `GameSuggestion`.`suggestedBy` is this object).
   """
-  gameNightProposals_on_proposer(
+  gameSuggestions_on_suggestedBy(
     """
     Filter condition to narrow down the query results.
     """
-    where: GameNightProposal_Filter
+    where: GameSuggestion_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [GameNightProposal_Order!]
+    orderBy: [GameSuggestion_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -734,76 +580,8 @@ extend type User {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: GameNightProposal_Having
-  ): [GameNightProposal!]! @fdc_generated(from: "GameNightProposal.proposer", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
-  """
-  ✨ List `Vote` objects in a one-to-many relationship (where `Vote`.`user` is this object).
-  """
-  votes_on_user(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: Vote_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [Vote_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: Vote_Having
-  ): [Vote!]! @fdc_generated(from: "Vote.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
-  """
-  ✨ List `GameNight` objects using `GameNightInvitation` as the join table (a `GameNightInvitation` object exists where its `invitee` is this and its `gameNight` is that).
-  """
-  gameNights_via_GameNightInvitation(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: GameNightInvitation_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [GameNightInvitation_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: GameNightInvitation_Having
-  ): [GameNight!]! @fdc_generated(from: "GameNightInvitation", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+    having: GameSuggestion_Having
+  ): [GameSuggestion!]! @fdc_generated(from: "GameSuggestion.suggestedBy", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
@@ -812,24 +590,6 @@ extend type User {
   ✨ Count the number of rows in the `User` table.
   """
   _count: Int! @fdc_generated(from: "User.", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `User` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  createdAt_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "User.createdAt", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `User` table where the `displayName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  displayName_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "User.displayName", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `User` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
@@ -849,82 +609,16 @@ extend type User {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "User.id", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `User` table where the `photoUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `User` table where the `username` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
-  photoUrl_count(
+  username_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "User.photoUrl", purpose: QUERY_COUNT)
-  """
-  ✨ Minimum of the `createdAt` field in the `User` table.
-  """
-  createdAt_min: Timestamp @fdc_generated(from: "User.createdAt", purpose: QUERY_MIN)
-  """
-  ✨ Maximum of the `createdAt` field in the `User` table.
-  """
-  createdAt_max: Timestamp @fdc_generated(from: "User.createdAt", purpose: QUERY_MAX)
+  ): Int! @fdc_generated(from: "User.username", purpose: QUERY_COUNT)
   """
   A generated field that is used for caching results in SDKs.
   """
   _id: ID! @fdc_generated(from: "User.id", purpose: GLOBAL_ID)
-}
-extend type Vote {
-  """
-  Implicit metadata field that cannot be written. It provides extra information about query results.
-  """
-  _metadata: _Metadata @fdc_generated(from: "Vote", purpose: METADATA_FIELD)
-  """
-  ✨ Count the number of rows in the `Vote` table.
-  """
-  _count: Int! @fdc_generated(from: "Vote.", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Vote` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  createdAt_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Vote.createdAt", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Vote` table where the `gameNightProposalId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  gameNightProposalId_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Vote.gameNightProposalId", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Vote` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  id_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Vote.id", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Vote` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  userId_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Vote.userId", purpose: QUERY_COUNT)
-  """
-  ✨ Minimum of the `createdAt` field in the `Vote` table.
-  """
-  createdAt_min: Timestamp @fdc_generated(from: "Vote.createdAt", purpose: QUERY_MIN)
-  """
-  ✨ Maximum of the `createdAt` field in the `Vote` table.
-  """
-  createdAt_max: Timestamp @fdc_generated(from: "Vote.createdAt", purpose: QUERY_MAX)
-  """
-  A generated field that is used for caching results in SDKs.
-  """
-  _id: ID! @fdc_generated(from: "Vote.id", purpose: GLOBAL_ID)
 }

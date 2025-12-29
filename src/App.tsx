@@ -539,6 +539,7 @@ const GameNightApp = () => {
            <button onClick={handleResetNight} className="btn-danger-ghost">
              💣 Reset Night
            </button>
+           <div style={{ fontSize: '10px', marginTop: '5px', opacity: 0.3 }}>v1.2 (Glass)</div>
         </footer>
 
       </div>

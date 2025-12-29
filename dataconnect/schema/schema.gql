@@ -1,52 +1,41 @@
+# --- 1. USER TYPE ---
 type User @table {
-  displayName: String!
+  id: String! @col(name: "uid") @default(expr: "auth.uid")
+  username: String!
   email: String
-  photoUrl: String
-  createdAt: Timestamp!
 }
 
+# --- 2. MAIN TYPES ---
 type GameNight @table {
+  id: UUID! 
   name: String!
   description: String
-  eventDate: Date!
-  eventTime: String # Consider using a specific time type if available, otherwise String is fine.
+  eventDate: Date!       
+  eventTime: String      
   isFinalized: Boolean
-  createdAt: Timestamp!
   creator: User!
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
-type Game @table {
+type GameSuggestion @table {
+  id: UUID!
   title: String!
-  minPlayers: Int
-  maxPlayers: Int
-  description: String
-  createdAt: Timestamp!
+  votes: Int @default(value: 0)
+  suggestedBy: User!
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
-type FoodItem @table {
-  name: String!
-  description: String
-  createdAt: Timestamp!
-}
-
-type GameNightProposal @table {
-  type: String! # Using String for enum type, as enums are not supported. Could be 'GAME' or 'FOOD'.
-  createdAt: Timestamp!
-  game: Game
-  foodItem: FoodItem
+# --- 3. JOIN TABLES ---
+type GameNightProposal @table(key: ["gameNight", "suggestion"]) {
   gameNight: GameNight!
-  proposer: User!
+  suggestion: GameSuggestion!
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
-type Vote @table {
-  createdAt: Timestamp!
-  gameNightProposal: GameNightProposal!
+type GameNightInvitation @table {
+  id: UUID!
+  gameNight: GameNight!
   user: User!
-}
-
-type GameNightInvitation @table(key: ["gameNight", "invitee"]) {
-  gameNight: GameNight!
-  invitee: User!
-  status: String # e.g., 'PENDING', 'ACCEPTED', 'DECLINED'
-  createdAt: Timestamp!
+  status: String!
+  createdAt: Timestamp! @default(expr: "request.time")
 }

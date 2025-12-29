@@ -1,43 +1,5 @@
 extend type Query {
   """
-  ✨ Look up a single `FoodItem` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
-  """
-  foodItem(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: FoodItem_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: FoodItem_FirstRow
-  ): FoodItem @fdc_generated(from: "FoodItem", purpose: QUERY_SINGLE)
-  """
-  ✨ Look up a single `Game` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
-  """
-  game(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Game_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Game_FirstRow
-  ): Game @fdc_generated(from: "Game", purpose: QUERY_SINGLE)
-  """
   ✨ Look up a single `GameNight` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   gameNight(
@@ -61,6 +23,11 @@ extend type Query {
   """
   gameNightInvitation(
     """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
     The key used to identify the object.
     """
     key: GameNightInvitation_Key
@@ -75,11 +42,6 @@ extend type Query {
   """
   gameNightProposal(
     """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
     The key used to identify the object.
     """
     key: GameNightProposal_Key
@@ -90,13 +52,37 @@ extend type Query {
     first: GameNightProposal_FirstRow
   ): GameNightProposal @fdc_generated(from: "GameNightProposal", purpose: QUERY_SINGLE)
   """
+  ✨ Look up a single `GameSuggestion` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  gameSuggestion(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: GameSuggestion_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: GameSuggestion_FirstRow
+  ): GameSuggestion @fdc_generated(from: "GameSuggestion", purpose: QUERY_SINGLE)
+  """
   ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   user(
     """
     The unique ID of the object.
     """
-    id: UUID
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
 
     """
     The key used to identify the object.
@@ -108,93 +94,6 @@ extend type Query {
     """
     first: User_FirstRow
   ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
-  """
-  ✨ Look up a single `Vote` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
-  """
-  vote(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Vote_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Vote_FirstRow
-  ): Vote @fdc_generated(from: "Vote", purpose: QUERY_SINGLE)
-  """
-  ✨ List `FoodItem` objects in the table and return selected fields, optionally filtered by `where` conditions
-  """
-  foodItems(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: FoodItem_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [FoodItem_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: FoodItem_Having
-  ): [FoodItem!]! @fdc_generated(from: "FoodItem", purpose: QUERY_MULTIPLE)
-  """
-  ✨ List `Game` objects in the table and return selected fields, optionally filtered by `where` conditions
-  """
-  games(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: Game_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [Game_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: Game_Having
-  ): [Game!]! @fdc_generated(from: "Game", purpose: QUERY_MULTIPLE)
   """
   ✨ List `GameNight` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
@@ -298,6 +197,40 @@ extend type Query {
     having: GameNightProposal_Having
   ): [GameNightProposal!]! @fdc_generated(from: "GameNightProposal", purpose: QUERY_MULTIPLE)
   """
+  ✨ List `GameSuggestion` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  gameSuggestions(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: GameSuggestion_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [GameSuggestion_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: GameSuggestion_Having
+  ): [GameSuggestion!]! @fdc_generated(from: "GameSuggestion", purpose: QUERY_MULTIPLE)
+  """
   ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
   users(
@@ -331,38 +264,4 @@ extend type Query {
     """
     having: User_Having
   ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
-  """
-  ✨ List `Vote` objects in the table and return selected fields, optionally filtered by `where` conditions
-  """
-  votes(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: Vote_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [Vote_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: Vote_Having
-  ): [Vote!]! @fdc_generated(from: "Vote", purpose: QUERY_MULTIPLE)
 }

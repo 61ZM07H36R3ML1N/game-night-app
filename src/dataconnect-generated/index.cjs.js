@@ -7,6 +7,54 @@ const connectorConfig = {
 };
 exports.connectorConfig = connectorConfig;
 
+const getUserRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetUser', inputVars);
+}
+getUserRef.operationName = 'GetUser';
+exports.getUserRef = getUserRef;
+
+exports.getUser = function getUser(dcOrVars, vars) {
+  return executeQuery(getUserRef(dcOrVars, vars));
+};
+
+const listGameNightsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListGameNights');
+}
+listGameNightsRef.operationName = 'ListGameNights';
+exports.listGameNightsRef = listGameNightsRef;
+
+exports.listGameNights = function listGameNights(dc) {
+  return executeQuery(listGameNightsRef(dc));
+};
+
+const getInvitationsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetInvitations', inputVars);
+}
+getInvitationsRef.operationName = 'GetInvitations';
+exports.getInvitationsRef = getInvitationsRef;
+
+exports.getInvitations = function getInvitations(dcOrVars, vars) {
+  return executeQuery(getInvitationsRef(dcOrVars, vars));
+};
+
+const createUserRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateUser', inputVars);
+}
+createUserRef.operationName = 'CreateUser';
+exports.createUserRef = createUserRef;
+
+exports.createUser = function createUser(dcOrVars, vars) {
+  return executeMutation(createUserRef(dcOrVars, vars));
+};
+
 const createGameNightRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -19,38 +67,38 @@ exports.createGameNight = function createGameNight(dcOrVars, vars) {
   return executeMutation(createGameNightRef(dcOrVars, vars));
 };
 
-const listUpcomingGameNightsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListUpcomingGameNights');
-}
-listUpcomingGameNightsRef.operationName = 'ListUpcomingGameNights';
-exports.listUpcomingGameNightsRef = listUpcomingGameNightsRef;
-
-exports.listUpcomingGameNights = function listUpcomingGameNights(dc) {
-  return executeQuery(listUpcomingGameNightsRef(dc));
-};
-
-const inviteToGameNightRef = (dcOrVars, vars) => {
+const suggestGameRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'InviteToGameNight', inputVars);
+  return mutationRef(dcInstance, 'SuggestGame', inputVars);
 }
-inviteToGameNightRef.operationName = 'InviteToGameNight';
-exports.inviteToGameNightRef = inviteToGameNightRef;
+suggestGameRef.operationName = 'SuggestGame';
+exports.suggestGameRef = suggestGameRef;
 
-exports.inviteToGameNight = function inviteToGameNight(dcOrVars, vars) {
-  return executeMutation(inviteToGameNightRef(dcOrVars, vars));
+exports.suggestGame = function suggestGame(dcOrVars, vars) {
+  return executeMutation(suggestGameRef(dcOrVars, vars));
 };
 
-const getGameNightDetailsRef = (dcOrVars, vars) => {
+const proposeGameForNightRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'GetGameNightDetails', inputVars);
+  return mutationRef(dcInstance, 'ProposeGameForNight', inputVars);
 }
-getGameNightDetailsRef.operationName = 'GetGameNightDetails';
-exports.getGameNightDetailsRef = getGameNightDetailsRef;
+proposeGameForNightRef.operationName = 'ProposeGameForNight';
+exports.proposeGameForNightRef = proposeGameForNightRef;
 
-exports.getGameNightDetails = function getGameNightDetails(dcOrVars, vars) {
-  return executeQuery(getGameNightDetailsRef(dcOrVars, vars));
+exports.proposeGameForNight = function proposeGameForNight(dcOrVars, vars) {
+  return executeMutation(proposeGameForNightRef(dcOrVars, vars));
+};
+
+const inviteUserRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'InviteUser', inputVars);
+}
+inviteUserRef.operationName = 'InviteUser';
+exports.inviteUserRef = inviteUserRef;
+
+exports.inviteUser = function inviteUser(dcOrVars, vars) {
+  return executeMutation(inviteUserRef(dcOrVars, vars));
 };

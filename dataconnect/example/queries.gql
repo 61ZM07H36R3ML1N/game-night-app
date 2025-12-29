@@ -1,67 +1,80 @@
-mutation CreateGameNight($name: String!, $description: String, $eventDate: Date!, $eventTime: String, $isFinalized: Boolean) @auth(level: USER) {
-  gameNight_insert(data: {
-    name: $name,
-    description: $description,
-    eventDate: $eventDate,
-    eventTime: $eventTime,
-    isFinalized: $isFinalized,
-    creatorId_expr: "auth.uid"
-  })
-}
+# --- QUERIES ---
 
-query ListUpcomingGameNights @auth(level: USER) {
-  gameNights(where: {eventDate: {gt_date: {today: true}}}) {
+query GetUser($uid: String!) {
+  user(id: $uid) {
     id
-    name
-    eventDate
-    eventTime
-    description
+    username  # Fixed: matches schema
+    email
   }
 }
 
-mutation InviteToGameNight($gameNightId: UUID!, $inviteeId: UUID!) @auth(level: USER) {
-  gameNightInvitation_insert(data: {
-    gameNightId: $gameNightId,
-    inviteeId: $inviteeId
-  })
-}
-
-query GetGameNightDetails($gameNightId: UUID!) @auth(level: USER) {
-  gameNight(id: $gameNightId) {
+query ListGameNights {
+  gameNights {
     id
     name
-    description
     eventDate
     eventTime
     isFinalized
     creator {
-      id
-      displayName
-    }
-    gameNightInvitations_on_gameNight {
-      invitee {
-        id
-        displayName
-      }
-      status
-    }
-    gameNightProposals_on_gameNight {
-      id
-      type
-      game {
-        id
-        title
-      }
-      foodItem {
-        id
-        name
-      }
-      votes_on_gameNightProposal {
-        user {
-          id
-          displayName
-        }
-      }
+      username
     }
   }
+}
+
+query GetInvitations($gameNightId: UUID!) {
+  gameNightInvitations(where: { gameNight: { id: { eq: $gameNightId } } }) {
+    id
+    status
+    user {    # Fixed: matches schema (was invitee)
+      username
+      email
+    }
+  }
+}
+
+# --- MUTATIONS ---
+
+mutation CreateUser($uid: String!, $username: String!, $email: String) {
+  user_insert(data: {
+    id: $uid, 
+    username: $username, 
+    email: $email
+  })
+}
+
+# Fixed: Requires ID input because we removed the broken uuidV4 generator
+mutation CreateGameNight($id: UUID!, $name: String!, $date: Date!, $creatorId: String!) {
+  gameNight_insert(data: {
+    id: $id,
+    name: $name,
+    eventDate: $date,
+    creatorId: $creatorId,
+    isFinalized: false
+  })
+}
+
+mutation SuggestGame($id: UUID!, $title: String!, $userId: String!) {
+  gameSuggestion_insert(data: {
+    id: $id,
+    title: $title,
+    suggestedById: $userId,
+    votes: 1
+  })
+}
+
+# Fixed: Removed "foodItem" and "type" fields that didn't exist
+mutation ProposeGameForNight($gameNightId: UUID!, $suggestionId: UUID!) {
+  gameNightProposal_insert(data: {
+    gameNightId: $gameNightId,
+    suggestionId: $suggestionId
+  })
+}
+
+mutation InviteUser($id: UUID!, $gameNightId: UUID!, $userId: String!) {
+  gameNightInvitation_insert(data: {
+    id: $id,
+    gameNightId: $gameNightId,
+    userId: $userId, # Fixed: matches schema (was inviteeId)
+    status: "Pending"
+  })
 }

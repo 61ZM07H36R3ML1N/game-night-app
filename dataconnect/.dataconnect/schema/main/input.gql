@@ -1,16 +1,4 @@
 """
-✨ `FoodItem_KeyOutput` returns the primary key fields of table type `FoodItem`.
-
-It has the same format as `FoodItem_Key`, but is only used as mutation return value.
-"""
-scalar FoodItem_KeyOutput
-"""
-✨ `Game_KeyOutput` returns the primary key fields of table type `Game`.
-
-It has the same format as `Game_Key`, but is only used as mutation return value.
-"""
-scalar Game_KeyOutput
-"""
 ✨ `GameNight_KeyOutput` returns the primary key fields of table type `GameNight`.
 
 It has the same format as `GameNight_Key`, but is only used as mutation return value.
@@ -29,575 +17,17 @@ It has the same format as `GameNightProposal_Key`, but is only used as mutation 
 """
 scalar GameNightProposal_KeyOutput
 """
+✨ `GameSuggestion_KeyOutput` returns the primary key fields of table type `GameSuggestion`.
+
+It has the same format as `GameSuggestion_Key`, but is only used as mutation return value.
+"""
+scalar GameSuggestion_KeyOutput
+"""
 ✨ `User_KeyOutput` returns the primary key fields of table type `User`.
 
 It has the same format as `User_Key`, but is only used as mutation return value.
 """
 scalar User_KeyOutput
-"""
-✨ `Vote_KeyOutput` returns the primary key fields of table type `Vote`.
-
-It has the same format as `Vote_Key`, but is only used as mutation return value.
-"""
-scalar Vote_KeyOutput
-"""
-✨ Generated data input type for table 'FoodItem'. It includes all necessary fields for creating or upserting rows into table.
-"""
-input FoodItem_Data {
-  """
-  ✨ Generated from Field `FoodItem`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `FoodItem`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: Timestamp
-  """
-  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `FoodItem`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_expr: Timestamp_Expr
-  """
-  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `FoodItem`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_time: Timestamp_Relative
-  """
-  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `FoodItem`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_update: [Timestamp_Update!]
-  """
-  ✨ Generated from Field `FoodItem`.`description` of type `String`
-  """
-  description: String
-  """
-  ✨ `_expr` server value variant of `description` (✨ Generated from Field `FoodItem`.`description` of type `String`)
-  """
-  description_expr: String_Expr
-  """
-  ✨ Generated from Field `FoodItem`.`name` of type `String!`
-  """
-  name: String
-  """
-  ✨ `_expr` server value variant of `name` (✨ Generated from Field `FoodItem`.`name` of type `String!`)
-  """
-  name_expr: String_Expr
-}
-"""
-✨ Generated filter input type for table 'FoodItem'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input FoodItem_Filter {
-  """
-  Apply multiple filter conditions using `AND` logic.
-  """
-  _and: [FoodItem_Filter!]
-  """
-  Negate the result of the provided filter condition.
-  """
-  _not: FoodItem_Filter
-  """
-  Apply multiple filter conditions using `OR` logic.
-  """
-  _or: [FoodItem_Filter!]
-  """
-  ✨ Generated from Field `FoodItem`.`id` of type `UUID!`
-  """
-  id: UUID_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: Timestamp_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`description` of type `String`
-  """
-  description: String_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`name` of type `String!`
-  """
-  name: String_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`gameNightProposals_on_foodItem` of type `[GameNightProposal!]!`
-  """
-  gameNightProposals_on_foodItem: GameNightProposal_ListFilter
-}
-"""
-✨ Generated first-row input type for table 'FoodItem'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
-"""
-input FoodItem_FirstRow {
-  """
-  Order the result by the specified fields.
-  """
-  orderBy: [FoodItem_Order!]
-  """
-  Filters rows based on the specified conditions.
-  """
-  where: FoodItem_Filter
-}
-"""
-✨ Generated having input type for table 'FoodItem'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input FoodItem_Having {
-  """
-  Apply multiple Having conditions using `AND` logic.
-  """
-  _and: [FoodItem_Having!]
-  """
-  Whether to apply DISTINCT to the aggregate function.
-  """
-  _distinct: Boolean
-  """
-  Negate the result of the provided Having condition.
-  """
-  _not: FoodItem_Having
-  """
-  Apply multiple Having conditions using `OR` logic.
-  """
-  _or: [FoodItem_Having!]
-  """
-  ✨ Generated from Field `FoodItem`.`_count` of type `Int!`
-  """
-  _count: Int_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt_count` of type `Int!`
-  """
-  createdAt_count: Int_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`description_count` of type `Int!`
-  """
-  description_count: Int_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`id_count` of type `Int!`
-  """
-  id_count: Int_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`name_count` of type `Int!`
-  """
-  name_count: Int_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt_min` of type `Timestamp`
-  """
-  createdAt_min: Timestamp_Filter
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt_max` of type `Timestamp`
-  """
-  createdAt_max: Timestamp_Filter
-}
-"""
-✨ Generated key input type for table 'FoodItem'. It represents the primary key fields used to uniquely identify a row in the table.
-"""
-input FoodItem_Key {
-  """
-  ✨ Generated from Field `FoodItem`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `FoodItem`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-}
-"""
-✨ Generated list filter input type for table 'FoodItem'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
-"""
-input FoodItem_ListFilter {
-  """
-  The desired number of objects that match the condition (defaults to at least one).
-  """
-  count: Int_Filter = {gt:0}
-  """
-  Condition of the related objects to filter for.
-  """
-  exist: FoodItem_Filter
-}
-"""
-✨ Generated order input type for table 'FoodItem'. This input defines the sorting order of rows in query results based on one or more fields.
-"""
-input FoodItem_Order {
-  """
-  ✨ Generated from Field `FoodItem`.`id` of type `UUID!`
-  """
-  id: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`description` of type `String`
-  """
-  description: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`name` of type `String!`
-  """
-  name: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`_count` of type `Int!`
-  """
-  _count: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt_count` of type `Int!`
-  """
-  createdAt_count: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`description_count` of type `Int!`
-  """
-  description_count: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`id_count` of type `Int!`
-  """
-  id_count: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`name_count` of type `Int!`
-  """
-  name_count: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt_min` of type `Timestamp`
-  """
-  createdAt_min: OrderDirection
-  """
-  ✨ Generated from Field `FoodItem`.`createdAt_max` of type `Timestamp`
-  """
-  createdAt_max: OrderDirection
-}
-"""
-✨ Generated data input type for table 'Game'. It includes all necessary fields for creating or upserting rows into table.
-"""
-input Game_Data {
-  """
-  ✨ Generated from Field `Game`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Game`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-  """
-  ✨ Generated from Field `Game`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: Timestamp
-  """
-  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Game`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_expr: Timestamp_Expr
-  """
-  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Game`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_time: Timestamp_Relative
-  """
-  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Game`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_update: [Timestamp_Update!]
-  """
-  ✨ Generated from Field `Game`.`description` of type `String`
-  """
-  description: String
-  """
-  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Game`.`description` of type `String`)
-  """
-  description_expr: String_Expr
-  """
-  ✨ Generated from Field `Game`.`maxPlayers` of type `Int`
-  """
-  maxPlayers: Int
-  """
-  ✨ `_expr` server value variant of `maxPlayers` (✨ Generated from Field `Game`.`maxPlayers` of type `Int`)
-  """
-  maxPlayers_expr: Int_Expr
-  """
-  ✨ `_update` server value variant of `maxPlayers` (✨ Generated from Field `Game`.`maxPlayers` of type `Int`)
-  """
-  maxPlayers_update: [Int_Update!]
-  """
-  ✨ Generated from Field `Game`.`minPlayers` of type `Int`
-  """
-  minPlayers: Int
-  """
-  ✨ `_expr` server value variant of `minPlayers` (✨ Generated from Field `Game`.`minPlayers` of type `Int`)
-  """
-  minPlayers_expr: Int_Expr
-  """
-  ✨ `_update` server value variant of `minPlayers` (✨ Generated from Field `Game`.`minPlayers` of type `Int`)
-  """
-  minPlayers_update: [Int_Update!]
-  """
-  ✨ Generated from Field `Game`.`title` of type `String!`
-  """
-  title: String
-  """
-  ✨ `_expr` server value variant of `title` (✨ Generated from Field `Game`.`title` of type `String!`)
-  """
-  title_expr: String_Expr
-}
-"""
-✨ Generated filter input type for table 'Game'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input Game_Filter {
-  """
-  Apply multiple filter conditions using `AND` logic.
-  """
-  _and: [Game_Filter!]
-  """
-  Negate the result of the provided filter condition.
-  """
-  _not: Game_Filter
-  """
-  Apply multiple filter conditions using `OR` logic.
-  """
-  _or: [Game_Filter!]
-  """
-  ✨ Generated from Field `Game`.`id` of type `UUID!`
-  """
-  id: UUID_Filter
-  """
-  ✨ Generated from Field `Game`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: Timestamp_Filter
-  """
-  ✨ Generated from Field `Game`.`description` of type `String`
-  """
-  description: String_Filter
-  """
-  ✨ Generated from Field `Game`.`maxPlayers` of type `Int`
-  """
-  maxPlayers: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`minPlayers` of type `Int`
-  """
-  minPlayers: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`title` of type `String!`
-  """
-  title: String_Filter
-  """
-  ✨ Generated from Field `Game`.`gameNightProposals_on_game` of type `[GameNightProposal!]!`
-  """
-  gameNightProposals_on_game: GameNightProposal_ListFilter
-}
-"""
-✨ Generated first-row input type for table 'Game'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
-"""
-input Game_FirstRow {
-  """
-  Order the result by the specified fields.
-  """
-  orderBy: [Game_Order!]
-  """
-  Filters rows based on the specified conditions.
-  """
-  where: Game_Filter
-}
-"""
-✨ Generated having input type for table 'Game'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input Game_Having {
-  """
-  Apply multiple Having conditions using `AND` logic.
-  """
-  _and: [Game_Having!]
-  """
-  Whether to apply DISTINCT to the aggregate function.
-  """
-  _distinct: Boolean
-  """
-  Negate the result of the provided Having condition.
-  """
-  _not: Game_Having
-  """
-  Apply multiple Having conditions using `OR` logic.
-  """
-  _or: [Game_Having!]
-  """
-  ✨ Generated from Field `Game`.`_count` of type `Int!`
-  """
-  _count: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`createdAt_count` of type `Int!`
-  """
-  createdAt_count: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`description_count` of type `Int!`
-  """
-  description_count: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`id_count` of type `Int!`
-  """
-  id_count: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_count` of type `Int!`
-  """
-  maxPlayers_count: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`minPlayers_count` of type `Int!`
-  """
-  minPlayers_count: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`title_count` of type `Int!`
-  """
-  title_count: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_sum` of type `Int`
-  """
-  maxPlayers_sum: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`minPlayers_sum` of type `Int`
-  """
-  minPlayers_sum: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_avg` of type `Float`
-  """
-  maxPlayers_avg: Float_Filter
-  """
-  ✨ Generated from Field `Game`.`minPlayers_avg` of type `Float`
-  """
-  minPlayers_avg: Float_Filter
-  """
-  ✨ Generated from Field `Game`.`createdAt_min` of type `Timestamp`
-  """
-  createdAt_min: Timestamp_Filter
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_min` of type `Int`
-  """
-  maxPlayers_min: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`minPlayers_min` of type `Int`
-  """
-  minPlayers_min: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`createdAt_max` of type `Timestamp`
-  """
-  createdAt_max: Timestamp_Filter
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_max` of type `Int`
-  """
-  maxPlayers_max: Int_Filter
-  """
-  ✨ Generated from Field `Game`.`minPlayers_max` of type `Int`
-  """
-  minPlayers_max: Int_Filter
-}
-"""
-✨ Generated key input type for table 'Game'. It represents the primary key fields used to uniquely identify a row in the table.
-"""
-input Game_Key {
-  """
-  ✨ Generated from Field `Game`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Game`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-}
-"""
-✨ Generated list filter input type for table 'Game'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
-"""
-input Game_ListFilter {
-  """
-  The desired number of objects that match the condition (defaults to at least one).
-  """
-  count: Int_Filter = {gt:0}
-  """
-  Condition of the related objects to filter for.
-  """
-  exist: Game_Filter
-}
-"""
-✨ Generated order input type for table 'Game'. This input defines the sorting order of rows in query results based on one or more fields.
-"""
-input Game_Order {
-  """
-  ✨ Generated from Field `Game`.`id` of type `UUID!`
-  """
-  id: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`description` of type `String`
-  """
-  description: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`maxPlayers` of type `Int`
-  """
-  maxPlayers: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`minPlayers` of type `Int`
-  """
-  minPlayers: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`title` of type `String!`
-  """
-  title: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`_count` of type `Int!`
-  """
-  _count: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`createdAt_count` of type `Int!`
-  """
-  createdAt_count: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`description_count` of type `Int!`
-  """
-  description_count: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`id_count` of type `Int!`
-  """
-  id_count: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_count` of type `Int!`
-  """
-  maxPlayers_count: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`minPlayers_count` of type `Int!`
-  """
-  minPlayers_count: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`title_count` of type `Int!`
-  """
-  title_count: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_sum` of type `Int`
-  """
-  maxPlayers_sum: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`minPlayers_sum` of type `Int`
-  """
-  minPlayers_sum: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_avg` of type `Float`
-  """
-  maxPlayers_avg: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`minPlayers_avg` of type `Float`
-  """
-  minPlayers_avg: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`createdAt_min` of type `Timestamp`
-  """
-  createdAt_min: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_min` of type `Int`
-  """
-  maxPlayers_min: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`minPlayers_min` of type `Int`
-  """
-  minPlayers_min: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`createdAt_max` of type `Timestamp`
-  """
-  createdAt_max: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`maxPlayers_max` of type `Int`
-  """
-  maxPlayers_max: OrderDirection
-  """
-  ✨ Generated from Field `Game`.`minPlayers_max` of type `Int`
-  """
-  minPlayers_max: OrderDirection
-}
 """
 ✨ Generated data input type for table 'GameNight'. It includes all necessary fields for creating or upserting rows into table.
 """
@@ -611,13 +41,13 @@ input GameNight_Data {
   """
   id_expr: UUID_Expr
   """
-  ✨ Generated from Field `GameNight`.`creatorId` of type `UUID!`
+  ✨ Generated from Field `GameNight`.`creatorId` of type `String!`
   """
-  creatorId: UUID
+  creatorId: String
   """
-  ✨ `_expr` server value variant of `creatorId` (✨ Generated from Field `GameNight`.`creatorId` of type `UUID!`)
+  ✨ `_expr` server value variant of `creatorId` (✨ Generated from Field `GameNight`.`creatorId` of type `String!`)
   """
-  creatorId_expr: UUID_Expr
+  creatorId_expr: String_Expr
   """
   ✨ Generated from Field `GameNight`.`creator` of type `User!`
   """
@@ -708,9 +138,9 @@ input GameNight_Filter {
   """
   id: UUID_Filter
   """
-  ✨ Generated from Field `GameNight`.`creatorId` of type `UUID!`
+  ✨ Generated from Field `GameNight`.`creatorId` of type `String!`
   """
-  creatorId: UUID_Filter
+  creatorId: String_Filter
   """
   ✨ Generated from Field `GameNight`.`creator` of type `User!`
   """
@@ -748,9 +178,9 @@ input GameNight_Filter {
   """
   gameNightProposals_on_gameNight: GameNightProposal_ListFilter
   """
-  ✨ Generated from Field `GameNight`.`users_via_GameNightInvitation` of type `[User!]!`
+  ✨ Generated from Field `GameNight`.`gameSuggestions_via_GameNightProposal` of type `[GameSuggestion!]!`
   """
-  users_via_GameNightInvitation: User_ListFilter
+  gameSuggestions_via_GameNightProposal: GameSuggestion_ListFilter
 }
 """
 ✨ Generated first-row input type for table 'GameNight'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -873,7 +303,7 @@ input GameNight_Order {
   """
   id: OrderDirection
   """
-  ✨ Generated from Field `GameNight`.`creatorId` of type `UUID!`
+  ✨ Generated from Field `GameNight`.`creatorId` of type `String!`
   """
   creatorId: OrderDirection
   """
@@ -962,6 +392,14 @@ input GameNight_Order {
 """
 input GameNightInvitation_Data {
   """
+  ✨ Generated from Field `GameNightInvitation`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `GameNightInvitation`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
   ✨ Generated from Field `GameNightInvitation`.`gameNightId` of type `UUID!`
   """
   gameNightId: UUID
@@ -970,21 +408,21 @@ input GameNightInvitation_Data {
   """
   gameNightId_expr: UUID_Expr
   """
-  ✨ Generated from Field `GameNightInvitation`.`inviteeId` of type `UUID!`
+  ✨ Generated from Field `GameNightInvitation`.`userId` of type `String!`
   """
-  inviteeId: UUID
+  userId: String
   """
-  ✨ `_expr` server value variant of `inviteeId` (✨ Generated from Field `GameNightInvitation`.`inviteeId` of type `UUID!`)
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `GameNightInvitation`.`userId` of type `String!`)
   """
-  inviteeId_expr: UUID_Expr
+  userId_expr: String_Expr
   """
   ✨ Generated from Field `GameNightInvitation`.`gameNight` of type `GameNight!`
   """
   gameNight: GameNight_Key
   """
-  ✨ Generated from Field `GameNightInvitation`.`invitee` of type `User!`
+  ✨ Generated from Field `GameNightInvitation`.`user` of type `User!`
   """
-  invitee: User_Key
+  user: User_Key
   """
   ✨ Generated from Field `GameNightInvitation`.`createdAt` of type `Timestamp!`
   """
@@ -1002,11 +440,11 @@ input GameNightInvitation_Data {
   """
   createdAt_update: [Timestamp_Update!]
   """
-  ✨ Generated from Field `GameNightInvitation`.`status` of type `String`
+  ✨ Generated from Field `GameNightInvitation`.`status` of type `String!`
   """
   status: String
   """
-  ✨ `_expr` server value variant of `status` (✨ Generated from Field `GameNightInvitation`.`status` of type `String`)
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `GameNightInvitation`.`status` of type `String!`)
   """
   status_expr: String_Expr
 }
@@ -1027,27 +465,31 @@ input GameNightInvitation_Filter {
   """
   _or: [GameNightInvitation_Filter!]
   """
+  ✨ Generated from Field `GameNightInvitation`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
   ✨ Generated from Field `GameNightInvitation`.`gameNightId` of type `UUID!`
   """
   gameNightId: UUID_Filter
   """
-  ✨ Generated from Field `GameNightInvitation`.`inviteeId` of type `UUID!`
+  ✨ Generated from Field `GameNightInvitation`.`userId` of type `String!`
   """
-  inviteeId: UUID_Filter
+  userId: String_Filter
   """
   ✨ Generated from Field `GameNightInvitation`.`gameNight` of type `GameNight!`
   """
   gameNight: GameNight_Filter
   """
-  ✨ Generated from Field `GameNightInvitation`.`invitee` of type `User!`
+  ✨ Generated from Field `GameNightInvitation`.`user` of type `User!`
   """
-  invitee: User_Filter
+  user: User_Filter
   """
   ✨ Generated from Field `GameNightInvitation`.`createdAt` of type `Timestamp!`
   """
   createdAt: Timestamp_Filter
   """
-  ✨ Generated from Field `GameNightInvitation`.`status` of type `String`
+  ✨ Generated from Field `GameNightInvitation`.`status` of type `String!`
   """
   status: String_Filter
 }
@@ -1097,13 +539,17 @@ input GameNightInvitation_Having {
   """
   gameNightId_count: Int_Filter
   """
-  ✨ Generated from Field `GameNightInvitation`.`inviteeId_count` of type `Int!`
+  ✨ Generated from Field `GameNightInvitation`.`id_count` of type `Int!`
   """
-  inviteeId_count: Int_Filter
+  id_count: Int_Filter
   """
   ✨ Generated from Field `GameNightInvitation`.`status_count` of type `Int!`
   """
   status_count: Int_Filter
+  """
+  ✨ Generated from Field `GameNightInvitation`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
   """
   ✨ Generated from Field `GameNightInvitation`.`createdAt_min` of type `Timestamp`
   """
@@ -1118,21 +564,13 @@ input GameNightInvitation_Having {
 """
 input GameNightInvitation_Key {
   """
-  ✨ Generated from Field `GameNightInvitation`.`gameNightId` of type `UUID!`
+  ✨ Generated from Field `GameNightInvitation`.`id` of type `UUID!`
   """
-  gameNightId: UUID
+  id: UUID
   """
-  ✨ `_expr` server value variant of `gameNightId` (✨ Generated from Field `GameNightInvitation`.`gameNightId` of type `UUID!`)
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `GameNightInvitation`.`id` of type `UUID!`)
   """
-  gameNightId_expr: UUID_Expr
-  """
-  ✨ Generated from Field `GameNightInvitation`.`inviteeId` of type `UUID!`
-  """
-  inviteeId: UUID
-  """
-  ✨ `_expr` server value variant of `inviteeId` (✨ Generated from Field `GameNightInvitation`.`inviteeId` of type `UUID!`)
-  """
-  inviteeId_expr: UUID_Expr
+  id_expr: UUID_Expr
 }
 """
 ✨ Generated list filter input type for table 'GameNightInvitation'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
@@ -1152,27 +590,31 @@ input GameNightInvitation_ListFilter {
 """
 input GameNightInvitation_Order {
   """
+  ✨ Generated from Field `GameNightInvitation`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
   ✨ Generated from Field `GameNightInvitation`.`gameNightId` of type `UUID!`
   """
   gameNightId: OrderDirection
   """
-  ✨ Generated from Field `GameNightInvitation`.`inviteeId` of type `UUID!`
+  ✨ Generated from Field `GameNightInvitation`.`userId` of type `String!`
   """
-  inviteeId: OrderDirection
+  userId: OrderDirection
   """
   ✨ Generated from Field `GameNightInvitation`.`gameNight` of type `GameNight!`
   """
   gameNight: GameNight_Order
   """
-  ✨ Generated from Field `GameNightInvitation`.`invitee` of type `User!`
+  ✨ Generated from Field `GameNightInvitation`.`user` of type `User!`
   """
-  invitee: User_Order
+  user: User_Order
   """
   ✨ Generated from Field `GameNightInvitation`.`createdAt` of type `Timestamp!`
   """
   createdAt: OrderDirection
   """
-  ✨ Generated from Field `GameNightInvitation`.`status` of type `String`
+  ✨ Generated from Field `GameNightInvitation`.`status` of type `String!`
   """
   status: OrderDirection
   """
@@ -1188,13 +630,17 @@ input GameNightInvitation_Order {
   """
   gameNightId_count: OrderDirection
   """
-  ✨ Generated from Field `GameNightInvitation`.`inviteeId_count` of type `Int!`
+  ✨ Generated from Field `GameNightInvitation`.`id_count` of type `Int!`
   """
-  inviteeId_count: OrderDirection
+  id_count: OrderDirection
   """
   ✨ Generated from Field `GameNightInvitation`.`status_count` of type `Int!`
   """
   status_count: OrderDirection
+  """
+  ✨ Generated from Field `GameNightInvitation`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
   """
   ✨ Generated from Field `GameNightInvitation`.`createdAt_min` of type `Timestamp`
   """
@@ -1209,30 +655,6 @@ input GameNightInvitation_Order {
 """
 input GameNightProposal_Data {
   """
-  ✨ Generated from Field `GameNightProposal`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `GameNightProposal`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-  """
-  ✨ Generated from Field `GameNightProposal`.`foodItemId` of type `UUID`
-  """
-  foodItemId: UUID
-  """
-  ✨ `_expr` server value variant of `foodItemId` (✨ Generated from Field `GameNightProposal`.`foodItemId` of type `UUID`)
-  """
-  foodItemId_expr: UUID_Expr
-  """
-  ✨ Generated from Field `GameNightProposal`.`gameId` of type `UUID`
-  """
-  gameId: UUID
-  """
-  ✨ `_expr` server value variant of `gameId` (✨ Generated from Field `GameNightProposal`.`gameId` of type `UUID`)
-  """
-  gameId_expr: UUID_Expr
-  """
   ✨ Generated from Field `GameNightProposal`.`gameNightId` of type `UUID!`
   """
   gameNightId: UUID
@@ -1241,29 +663,21 @@ input GameNightProposal_Data {
   """
   gameNightId_expr: UUID_Expr
   """
-  ✨ Generated from Field `GameNightProposal`.`proposerId` of type `UUID!`
+  ✨ Generated from Field `GameNightProposal`.`suggestionId` of type `UUID!`
   """
-  proposerId: UUID
+  suggestionId: UUID
   """
-  ✨ `_expr` server value variant of `proposerId` (✨ Generated from Field `GameNightProposal`.`proposerId` of type `UUID!`)
+  ✨ `_expr` server value variant of `suggestionId` (✨ Generated from Field `GameNightProposal`.`suggestionId` of type `UUID!`)
   """
-  proposerId_expr: UUID_Expr
-  """
-  ✨ Generated from Field `GameNightProposal`.`foodItem` of type `FoodItem`
-  """
-  foodItem: FoodItem_Key
-  """
-  ✨ Generated from Field `GameNightProposal`.`game` of type `Game`
-  """
-  game: Game_Key
+  suggestionId_expr: UUID_Expr
   """
   ✨ Generated from Field `GameNightProposal`.`gameNight` of type `GameNight!`
   """
   gameNight: GameNight_Key
   """
-  ✨ Generated from Field `GameNightProposal`.`proposer` of type `User!`
+  ✨ Generated from Field `GameNightProposal`.`suggestion` of type `GameSuggestion!`
   """
-  proposer: User_Key
+  suggestion: GameSuggestion_Key
   """
   ✨ Generated from Field `GameNightProposal`.`createdAt` of type `Timestamp!`
   """
@@ -1280,14 +694,6 @@ input GameNightProposal_Data {
   ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `GameNightProposal`.`createdAt` of type `Timestamp!`)
   """
   createdAt_update: [Timestamp_Update!]
-  """
-  ✨ Generated from Field `GameNightProposal`.`type` of type `String!`
-  """
-  type: String
-  """
-  ✨ `_expr` server value variant of `type` (✨ Generated from Field `GameNightProposal`.`type` of type `String!`)
-  """
-  type_expr: String_Expr
 }
 """
 ✨ Generated filter input type for table 'GameNightProposal'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -1306,53 +712,25 @@ input GameNightProposal_Filter {
   """
   _or: [GameNightProposal_Filter!]
   """
-  ✨ Generated from Field `GameNightProposal`.`id` of type `UUID!`
-  """
-  id: UUID_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`foodItemId` of type `UUID`
-  """
-  foodItemId: UUID_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`gameId` of type `UUID`
-  """
-  gameId: UUID_Filter
-  """
   ✨ Generated from Field `GameNightProposal`.`gameNightId` of type `UUID!`
   """
   gameNightId: UUID_Filter
   """
-  ✨ Generated from Field `GameNightProposal`.`proposerId` of type `UUID!`
+  ✨ Generated from Field `GameNightProposal`.`suggestionId` of type `UUID!`
   """
-  proposerId: UUID_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`foodItem` of type `FoodItem`
-  """
-  foodItem: FoodItem_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`game` of type `Game`
-  """
-  game: Game_Filter
+  suggestionId: UUID_Filter
   """
   ✨ Generated from Field `GameNightProposal`.`gameNight` of type `GameNight!`
   """
   gameNight: GameNight_Filter
   """
-  ✨ Generated from Field `GameNightProposal`.`proposer` of type `User!`
+  ✨ Generated from Field `GameNightProposal`.`suggestion` of type `GameSuggestion!`
   """
-  proposer: User_Filter
+  suggestion: GameSuggestion_Filter
   """
   ✨ Generated from Field `GameNightProposal`.`createdAt` of type `Timestamp!`
   """
   createdAt: Timestamp_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`type` of type `String!`
-  """
-  type: String_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`votes_on_gameNightProposal` of type `[Vote!]!`
-  """
-  votes_on_gameNightProposal: Vote_ListFilter
 }
 """
 ✨ Generated first-row input type for table 'GameNightProposal'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -1396,29 +774,13 @@ input GameNightProposal_Having {
   """
   createdAt_count: Int_Filter
   """
-  ✨ Generated from Field `GameNightProposal`.`foodItemId_count` of type `Int!`
-  """
-  foodItemId_count: Int_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`gameId_count` of type `Int!`
-  """
-  gameId_count: Int_Filter
-  """
   ✨ Generated from Field `GameNightProposal`.`gameNightId_count` of type `Int!`
   """
   gameNightId_count: Int_Filter
   """
-  ✨ Generated from Field `GameNightProposal`.`id_count` of type `Int!`
+  ✨ Generated from Field `GameNightProposal`.`suggestionId_count` of type `Int!`
   """
-  id_count: Int_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`proposerId_count` of type `Int!`
-  """
-  proposerId_count: Int_Filter
-  """
-  ✨ Generated from Field `GameNightProposal`.`type_count` of type `Int!`
-  """
-  type_count: Int_Filter
+  suggestionId_count: Int_Filter
   """
   ✨ Generated from Field `GameNightProposal`.`createdAt_min` of type `Timestamp`
   """
@@ -1433,13 +795,21 @@ input GameNightProposal_Having {
 """
 input GameNightProposal_Key {
   """
-  ✨ Generated from Field `GameNightProposal`.`id` of type `UUID!`
+  ✨ Generated from Field `GameNightProposal`.`gameNightId` of type `UUID!`
   """
-  id: UUID
+  gameNightId: UUID
   """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `GameNightProposal`.`id` of type `UUID!`)
+  ✨ `_expr` server value variant of `gameNightId` (✨ Generated from Field `GameNightProposal`.`gameNightId` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  gameNightId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `GameNightProposal`.`suggestionId` of type `UUID!`
+  """
+  suggestionId: UUID
+  """
+  ✨ `_expr` server value variant of `suggestionId` (✨ Generated from Field `GameNightProposal`.`suggestionId` of type `UUID!`)
+  """
+  suggestionId_expr: UUID_Expr
 }
 """
 ✨ Generated list filter input type for table 'GameNightProposal'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
@@ -1459,49 +829,25 @@ input GameNightProposal_ListFilter {
 """
 input GameNightProposal_Order {
   """
-  ✨ Generated from Field `GameNightProposal`.`id` of type `UUID!`
-  """
-  id: OrderDirection
-  """
-  ✨ Generated from Field `GameNightProposal`.`foodItemId` of type `UUID`
-  """
-  foodItemId: OrderDirection
-  """
-  ✨ Generated from Field `GameNightProposal`.`gameId` of type `UUID`
-  """
-  gameId: OrderDirection
-  """
   ✨ Generated from Field `GameNightProposal`.`gameNightId` of type `UUID!`
   """
   gameNightId: OrderDirection
   """
-  ✨ Generated from Field `GameNightProposal`.`proposerId` of type `UUID!`
+  ✨ Generated from Field `GameNightProposal`.`suggestionId` of type `UUID!`
   """
-  proposerId: OrderDirection
-  """
-  ✨ Generated from Field `GameNightProposal`.`foodItem` of type `FoodItem`
-  """
-  foodItem: FoodItem_Order
-  """
-  ✨ Generated from Field `GameNightProposal`.`game` of type `Game`
-  """
-  game: Game_Order
+  suggestionId: OrderDirection
   """
   ✨ Generated from Field `GameNightProposal`.`gameNight` of type `GameNight!`
   """
   gameNight: GameNight_Order
   """
-  ✨ Generated from Field `GameNightProposal`.`proposer` of type `User!`
+  ✨ Generated from Field `GameNightProposal`.`suggestion` of type `GameSuggestion!`
   """
-  proposer: User_Order
+  suggestion: GameSuggestion_Order
   """
   ✨ Generated from Field `GameNightProposal`.`createdAt` of type `Timestamp!`
   """
   createdAt: OrderDirection
-  """
-  ✨ Generated from Field `GameNightProposal`.`type` of type `String!`
-  """
-  type: OrderDirection
   """
   ✨ Generated from Field `GameNightProposal`.`_count` of type `Int!`
   """
@@ -1511,29 +857,13 @@ input GameNightProposal_Order {
   """
   createdAt_count: OrderDirection
   """
-  ✨ Generated from Field `GameNightProposal`.`foodItemId_count` of type `Int!`
-  """
-  foodItemId_count: OrderDirection
-  """
-  ✨ Generated from Field `GameNightProposal`.`gameId_count` of type `Int!`
-  """
-  gameId_count: OrderDirection
-  """
   ✨ Generated from Field `GameNightProposal`.`gameNightId_count` of type `Int!`
   """
   gameNightId_count: OrderDirection
   """
-  ✨ Generated from Field `GameNightProposal`.`id_count` of type `Int!`
+  ✨ Generated from Field `GameNightProposal`.`suggestionId_count` of type `Int!`
   """
-  id_count: OrderDirection
-  """
-  ✨ Generated from Field `GameNightProposal`.`proposerId_count` of type `Int!`
-  """
-  proposerId_count: OrderDirection
-  """
-  ✨ Generated from Field `GameNightProposal`.`type_count` of type `Int!`
-  """
-  type_count: OrderDirection
+  suggestionId_count: OrderDirection
   """
   ✨ Generated from Field `GameNightProposal`.`createdAt_min` of type `Timestamp`
   """
@@ -1544,41 +874,312 @@ input GameNightProposal_Order {
   createdAt_max: OrderDirection
 }
 """
+✨ Generated data input type for table 'GameSuggestion'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input GameSuggestion_Data {
+  """
+  ✨ Generated from Field `GameSuggestion`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `GameSuggestion`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `GameSuggestion`.`suggestedById` of type `String!`
+  """
+  suggestedById: String
+  """
+  ✨ `_expr` server value variant of `suggestedById` (✨ Generated from Field `GameSuggestion`.`suggestedById` of type `String!`)
+  """
+  suggestedById_expr: String_Expr
+  """
+  ✨ Generated from Field `GameSuggestion`.`suggestedBy` of type `User!`
+  """
+  suggestedBy: User_Key
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `GameSuggestion`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `GameSuggestion`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `GameSuggestion`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `GameSuggestion`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `GameSuggestion`.`title` of type `String!`)
+  """
+  title_expr: String_Expr
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes` of type `Int`
+  """
+  votes: Int
+  """
+  ✨ `_expr` server value variant of `votes` (✨ Generated from Field `GameSuggestion`.`votes` of type `Int`)
+  """
+  votes_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `votes` (✨ Generated from Field `GameSuggestion`.`votes` of type `Int`)
+  """
+  votes_update: [Int_Update!]
+}
+"""
+✨ Generated filter input type for table 'GameSuggestion'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input GameSuggestion_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [GameSuggestion_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: GameSuggestion_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [GameSuggestion_Filter!]
+  """
+  ✨ Generated from Field `GameSuggestion`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`suggestedById` of type `String!`
+  """
+  suggestedById: String_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`suggestedBy` of type `User!`
+  """
+  suggestedBy: User_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`title` of type `String!`
+  """
+  title: String_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes` of type `Int`
+  """
+  votes: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`gameNightProposals_on_suggestion` of type `[GameNightProposal!]!`
+  """
+  gameNightProposals_on_suggestion: GameNightProposal_ListFilter
+  """
+  ✨ Generated from Field `GameSuggestion`.`gameNights_via_GameNightProposal` of type `[GameNight!]!`
+  """
+  gameNights_via_GameNightProposal: GameNight_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'GameSuggestion'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input GameSuggestion_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [GameSuggestion_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: GameSuggestion_Filter
+}
+"""
+✨ Generated having input type for table 'GameSuggestion'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input GameSuggestion_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [GameSuggestion_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: GameSuggestion_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [GameSuggestion_Having!]
+  """
+  ✨ Generated from Field `GameSuggestion`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`suggestedById_count` of type `Int!`
+  """
+  suggestedById_count: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_count` of type `Int!`
+  """
+  votes_count: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_sum` of type `Int`
+  """
+  votes_sum: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_avg` of type `Float`
+  """
+  votes_avg: Float_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_min` of type `Int`
+  """
+  votes_min: Int_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_max` of type `Int`
+  """
+  votes_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'GameSuggestion'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input GameSuggestion_Key {
+  """
+  ✨ Generated from Field `GameSuggestion`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `GameSuggestion`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'GameSuggestion'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input GameSuggestion_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: GameSuggestion_Filter
+}
+"""
+✨ Generated order input type for table 'GameSuggestion'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input GameSuggestion_Order {
+  """
+  ✨ Generated from Field `GameSuggestion`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`suggestedById` of type `String!`
+  """
+  suggestedById: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`suggestedBy` of type `User!`
+  """
+  suggestedBy: User_Order
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes` of type `Int`
+  """
+  votes: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`suggestedById_count` of type `Int!`
+  """
+  suggestedById_count: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_count` of type `Int!`
+  """
+  votes_count: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_sum` of type `Int`
+  """
+  votes_sum: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_avg` of type `Float`
+  """
+  votes_avg: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_min` of type `Int`
+  """
+  votes_min: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `GameSuggestion`.`votes_max` of type `Int`
+  """
+  votes_max: OrderDirection
+}
+"""
 ✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
 """
 input User_Data {
   """
-  ✨ Generated from Field `User`.`id` of type `UUID!`
+  ✨ Generated from Field `User`.`id` of type `String!`
   """
-  id: UUID
+  id: String
   """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `String!`)
   """
-  id_expr: UUID_Expr
-  """
-  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: Timestamp
-  """
-  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_expr: Timestamp_Expr
-  """
-  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_time: Timestamp_Relative
-  """
-  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_update: [Timestamp_Update!]
-  """
-  ✨ Generated from Field `User`.`displayName` of type `String!`
-  """
-  displayName: String
-  """
-  ✨ `_expr` server value variant of `displayName` (✨ Generated from Field `User`.`displayName` of type `String!`)
-  """
-  displayName_expr: String_Expr
+  id_expr: String_Expr
   """
   ✨ Generated from Field `User`.`email` of type `String`
   """
@@ -1588,13 +1189,13 @@ input User_Data {
   """
   email_expr: String_Expr
   """
-  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  ✨ Generated from Field `User`.`username` of type `String!`
   """
-  photoUrl: String
+  username: String
   """
-  ✨ `_expr` server value variant of `photoUrl` (✨ Generated from Field `User`.`photoUrl` of type `String`)
+  ✨ `_expr` server value variant of `username` (✨ Generated from Field `User`.`username` of type `String!`)
   """
-  photoUrl_expr: String_Expr
+  username_expr: String_Expr
 }
 """
 ✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -1613,45 +1214,29 @@ input User_Filter {
   """
   _or: [User_Filter!]
   """
-  ✨ Generated from Field `User`.`id` of type `UUID!`
+  ✨ Generated from Field `User`.`id` of type `String!`
   """
-  id: UUID_Filter
-  """
-  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: Timestamp_Filter
-  """
-  ✨ Generated from Field `User`.`displayName` of type `String!`
-  """
-  displayName: String_Filter
+  id: String_Filter
   """
   ✨ Generated from Field `User`.`email` of type `String`
   """
   email: String_Filter
   """
-  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  ✨ Generated from Field `User`.`username` of type `String!`
   """
-  photoUrl: String_Filter
+  username: String_Filter
   """
   ✨ Generated from Field `User`.`gameNights_on_creator` of type `[GameNight!]!`
   """
   gameNights_on_creator: GameNight_ListFilter
   """
-  ✨ Generated from Field `User`.`gameNightInvitations_on_invitee` of type `[GameNightInvitation!]!`
+  ✨ Generated from Field `User`.`gameNightInvitations_on_user` of type `[GameNightInvitation!]!`
   """
-  gameNightInvitations_on_invitee: GameNightInvitation_ListFilter
+  gameNightInvitations_on_user: GameNightInvitation_ListFilter
   """
-  ✨ Generated from Field `User`.`gameNightProposals_on_proposer` of type `[GameNightProposal!]!`
+  ✨ Generated from Field `User`.`gameSuggestions_on_suggestedBy` of type `[GameSuggestion!]!`
   """
-  gameNightProposals_on_proposer: GameNightProposal_ListFilter
-  """
-  ✨ Generated from Field `User`.`votes_on_user` of type `[Vote!]!`
-  """
-  votes_on_user: Vote_ListFilter
-  """
-  ✨ Generated from Field `User`.`gameNights_via_GameNightInvitation` of type `[GameNight!]!`
-  """
-  gameNights_via_GameNightInvitation: GameNight_ListFilter
+  gameSuggestions_on_suggestedBy: GameSuggestion_ListFilter
 }
 """
 ✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -1691,14 +1276,6 @@ input User_Having {
   """
   _count: Int_Filter
   """
-  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
-  """
-  createdAt_count: Int_Filter
-  """
-  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
-  """
-  displayName_count: Int_Filter
-  """
   ✨ Generated from Field `User`.`email_count` of type `Int!`
   """
   email_count: Int_Filter
@@ -1707,30 +1284,22 @@ input User_Having {
   """
   id_count: Int_Filter
   """
-  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
   """
-  photoUrl_count: Int_Filter
-  """
-  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
-  """
-  createdAt_min: Timestamp_Filter
-  """
-  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
-  """
-  createdAt_max: Timestamp_Filter
+  username_count: Int_Filter
 }
 """
 ✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
 """
 input User_Key {
   """
-  ✨ Generated from Field `User`.`id` of type `UUID!`
+  ✨ Generated from Field `User`.`id` of type `String!`
   """
-  id: UUID
+  id: String
   """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `String!`)
   """
-  id_expr: UUID_Expr
+  id_expr: String_Expr
 }
 """
 ✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
@@ -1750,37 +1319,21 @@ input User_ListFilter {
 """
 input User_Order {
   """
-  ✨ Generated from Field `User`.`id` of type `UUID!`
+  ✨ Generated from Field `User`.`id` of type `String!`
   """
   id: OrderDirection
-  """
-  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: OrderDirection
-  """
-  ✨ Generated from Field `User`.`displayName` of type `String!`
-  """
-  displayName: OrderDirection
   """
   ✨ Generated from Field `User`.`email` of type `String`
   """
   email: OrderDirection
   """
-  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  ✨ Generated from Field `User`.`username` of type `String!`
   """
-  photoUrl: OrderDirection
+  username: OrderDirection
   """
   ✨ Generated from Field `User`.`_count` of type `Int!`
   """
   _count: OrderDirection
-  """
-  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
-  """
-  createdAt_count: OrderDirection
-  """
-  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
-  """
-  displayName_count: OrderDirection
   """
   ✨ Generated from Field `User`.`email_count` of type `Int!`
   """
@@ -1790,254 +1343,7 @@ input User_Order {
   """
   id_count: OrderDirection
   """
-  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
   """
-  photoUrl_count: OrderDirection
-  """
-  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
-  """
-  createdAt_min: OrderDirection
-  """
-  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
-  """
-  createdAt_max: OrderDirection
-}
-"""
-✨ Generated data input type for table 'Vote'. It includes all necessary fields for creating or upserting rows into table.
-"""
-input Vote_Data {
-  """
-  ✨ Generated from Field `Vote`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Vote`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-  """
-  ✨ Generated from Field `Vote`.`gameNightProposalId` of type `UUID!`
-  """
-  gameNightProposalId: UUID
-  """
-  ✨ `_expr` server value variant of `gameNightProposalId` (✨ Generated from Field `Vote`.`gameNightProposalId` of type `UUID!`)
-  """
-  gameNightProposalId_expr: UUID_Expr
-  """
-  ✨ Generated from Field `Vote`.`userId` of type `UUID!`
-  """
-  userId: UUID
-  """
-  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Vote`.`userId` of type `UUID!`)
-  """
-  userId_expr: UUID_Expr
-  """
-  ✨ Generated from Field `Vote`.`gameNightProposal` of type `GameNightProposal!`
-  """
-  gameNightProposal: GameNightProposal_Key
-  """
-  ✨ Generated from Field `Vote`.`user` of type `User!`
-  """
-  user: User_Key
-  """
-  ✨ Generated from Field `Vote`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: Timestamp
-  """
-  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Vote`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_expr: Timestamp_Expr
-  """
-  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Vote`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_time: Timestamp_Relative
-  """
-  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Vote`.`createdAt` of type `Timestamp!`)
-  """
-  createdAt_update: [Timestamp_Update!]
-}
-"""
-✨ Generated filter input type for table 'Vote'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input Vote_Filter {
-  """
-  Apply multiple filter conditions using `AND` logic.
-  """
-  _and: [Vote_Filter!]
-  """
-  Negate the result of the provided filter condition.
-  """
-  _not: Vote_Filter
-  """
-  Apply multiple filter conditions using `OR` logic.
-  """
-  _or: [Vote_Filter!]
-  """
-  ✨ Generated from Field `Vote`.`id` of type `UUID!`
-  """
-  id: UUID_Filter
-  """
-  ✨ Generated from Field `Vote`.`gameNightProposalId` of type `UUID!`
-  """
-  gameNightProposalId: UUID_Filter
-  """
-  ✨ Generated from Field `Vote`.`userId` of type `UUID!`
-  """
-  userId: UUID_Filter
-  """
-  ✨ Generated from Field `Vote`.`gameNightProposal` of type `GameNightProposal!`
-  """
-  gameNightProposal: GameNightProposal_Filter
-  """
-  ✨ Generated from Field `Vote`.`user` of type `User!`
-  """
-  user: User_Filter
-  """
-  ✨ Generated from Field `Vote`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: Timestamp_Filter
-}
-"""
-✨ Generated first-row input type for table 'Vote'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
-"""
-input Vote_FirstRow {
-  """
-  Order the result by the specified fields.
-  """
-  orderBy: [Vote_Order!]
-  """
-  Filters rows based on the specified conditions.
-  """
-  where: Vote_Filter
-}
-"""
-✨ Generated having input type for table 'Vote'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input Vote_Having {
-  """
-  Apply multiple Having conditions using `AND` logic.
-  """
-  _and: [Vote_Having!]
-  """
-  Whether to apply DISTINCT to the aggregate function.
-  """
-  _distinct: Boolean
-  """
-  Negate the result of the provided Having condition.
-  """
-  _not: Vote_Having
-  """
-  Apply multiple Having conditions using `OR` logic.
-  """
-  _or: [Vote_Having!]
-  """
-  ✨ Generated from Field `Vote`.`_count` of type `Int!`
-  """
-  _count: Int_Filter
-  """
-  ✨ Generated from Field `Vote`.`createdAt_count` of type `Int!`
-  """
-  createdAt_count: Int_Filter
-  """
-  ✨ Generated from Field `Vote`.`gameNightProposalId_count` of type `Int!`
-  """
-  gameNightProposalId_count: Int_Filter
-  """
-  ✨ Generated from Field `Vote`.`id_count` of type `Int!`
-  """
-  id_count: Int_Filter
-  """
-  ✨ Generated from Field `Vote`.`userId_count` of type `Int!`
-  """
-  userId_count: Int_Filter
-  """
-  ✨ Generated from Field `Vote`.`createdAt_min` of type `Timestamp`
-  """
-  createdAt_min: Timestamp_Filter
-  """
-  ✨ Generated from Field `Vote`.`createdAt_max` of type `Timestamp`
-  """
-  createdAt_max: Timestamp_Filter
-}
-"""
-✨ Generated key input type for table 'Vote'. It represents the primary key fields used to uniquely identify a row in the table.
-"""
-input Vote_Key {
-  """
-  ✨ Generated from Field `Vote`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Vote`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-}
-"""
-✨ Generated list filter input type for table 'Vote'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
-"""
-input Vote_ListFilter {
-  """
-  The desired number of objects that match the condition (defaults to at least one).
-  """
-  count: Int_Filter = {gt:0}
-  """
-  Condition of the related objects to filter for.
-  """
-  exist: Vote_Filter
-}
-"""
-✨ Generated order input type for table 'Vote'. This input defines the sorting order of rows in query results based on one or more fields.
-"""
-input Vote_Order {
-  """
-  ✨ Generated from Field `Vote`.`id` of type `UUID!`
-  """
-  id: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`gameNightProposalId` of type `UUID!`
-  """
-  gameNightProposalId: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`userId` of type `UUID!`
-  """
-  userId: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`gameNightProposal` of type `GameNightProposal!`
-  """
-  gameNightProposal: GameNightProposal_Order
-  """
-  ✨ Generated from Field `Vote`.`user` of type `User!`
-  """
-  user: User_Order
-  """
-  ✨ Generated from Field `Vote`.`createdAt` of type `Timestamp!`
-  """
-  createdAt: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`_count` of type `Int!`
-  """
-  _count: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`createdAt_count` of type `Int!`
-  """
-  createdAt_count: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`gameNightProposalId_count` of type `Int!`
-  """
-  gameNightProposalId_count: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`id_count` of type `Int!`
-  """
-  id_count: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`userId_count` of type `Int!`
-  """
-  userId_count: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`createdAt_min` of type `Timestamp`
-  """
-  createdAt_min: OrderDirection
-  """
-  ✨ Generated from Field `Vote`.`createdAt_max` of type `Timestamp`
-  """
-  createdAt_max: OrderDirection
+  username_count: OrderDirection
 }

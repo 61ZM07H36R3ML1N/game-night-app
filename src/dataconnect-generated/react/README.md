@@ -17,11 +17,15 @@ You can also follow the instructions from the [Data Connect documentation](https
 - [**Accessing the connector**](#accessing-the-connector)
   - [*Connecting to the local Emulator*](#connecting-to-the-local-emulator)
 - [**Queries**](#queries)
-  - [*ListUpcomingGameNights*](#listupcominggamenights)
-  - [*GetGameNightDetails*](#getgamenightdetails)
+  - [*GetUser*](#getuser)
+  - [*ListGameNights*](#listgamenights)
+  - [*GetInvitations*](#getinvitations)
 - [**Mutations**](#mutations)
+  - [*CreateUser*](#createuser)
   - [*CreateGameNight*](#creategamenight)
-  - [*InviteToGameNight*](#invitetogamenight)
+  - [*SuggestGame*](#suggestgame)
+  - [*ProposeGameForNight*](#proposegamefornight)
+  - [*InviteUser*](#inviteuser)
 
 # TanStack Query Firebase & TanStack React Query
 This SDK provides [React](https://react.dev/) hooks generated specific to your application, for the operations found in the connector `example`. These hooks are generated using [TanStack Query Firebase](https://react-query-firebase.invertase.dev/) by our partners at Invertase, a library built on top of [TanStack React Query v5](https://tanstack.com/query/v5/docs/framework/react/overview).
@@ -113,63 +117,152 @@ Here's a general overview of how to use the generated Query hooks in your code:
 
 Below are examples of how to use the `example` connector's generated Query hook functions to execute each Query. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#operations-react-angular).
 
-## ListUpcomingGameNights
-You can execute the `ListUpcomingGameNights` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+## GetUser
+You can execute the `GetUser` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
-useListUpcomingGameNights(dc: DataConnect, options?: useDataConnectQueryOptions<ListUpcomingGameNightsData>): UseDataConnectQueryResult<ListUpcomingGameNightsData, undefined>;
+useGetUser(dc: DataConnect, vars: GetUserVariables, options?: useDataConnectQueryOptions<GetUserData>): UseDataConnectQueryResult<GetUserData, GetUserVariables>;
 ```
 You can also pass in a `DataConnect` instance to the Query hook function.
 ```javascript
-useListUpcomingGameNights(options?: useDataConnectQueryOptions<ListUpcomingGameNightsData>): UseDataConnectQueryResult<ListUpcomingGameNightsData, undefined>;
+useGetUser(vars: GetUserVariables, options?: useDataConnectQueryOptions<GetUserData>): UseDataConnectQueryResult<GetUserData, GetUserVariables>;
 ```
 
 ### Variables
-The `ListUpcomingGameNights` Query has no variables.
+The `GetUser` Query requires an argument of type `GetUserVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface GetUserVariables {
+  uid: string;
+}
+```
 ### Return Type
-Recall that calling the `ListUpcomingGameNights` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+Recall that calling the `GetUser` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListUpcomingGameNights` Query is of type `ListUpcomingGameNightsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetUser` Query is of type `GetUserData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
-export interface ListUpcomingGameNightsData {
+export interface GetUserData {
+  user?: {
+    id: string;
+    username: string;
+    email?: string | null;
+  } & User_Key;
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `GetUser`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, GetUserVariables } from '@dataconnect/generated';
+import { useGetUser } from '@dataconnect/generated/react'
+
+export default function GetUserComponent() {
+  // The `useGetUser` Query hook requires an argument of type `GetUserVariables`:
+  const getUserVars: GetUserVariables = {
+    uid: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useGetUser(getUserVars);
+  // Variables can be defined inline as well.
+  const query = useGetUser({ uid: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useGetUser(dataConnect, getUserVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetUser(getUserVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetUser(dataConnect, getUserVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.user);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## ListGameNights
+You can execute the `ListGameNights` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListGameNights(dc: DataConnect, options?: useDataConnectQueryOptions<ListGameNightsData>): UseDataConnectQueryResult<ListGameNightsData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListGameNights(options?: useDataConnectQueryOptions<ListGameNightsData>): UseDataConnectQueryResult<ListGameNightsData, undefined>;
+```
+
+### Variables
+The `ListGameNights` Query has no variables.
+### Return Type
+Recall that calling the `ListGameNights` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListGameNights` Query is of type `ListGameNightsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListGameNightsData {
   gameNights: ({
     id: UUIDString;
     name: string;
     eventDate: DateString;
     eventTime?: string | null;
-    description?: string | null;
+    isFinalized?: boolean | null;
+    creator: {
+      username: string;
+    };
   } & GameNight_Key)[];
 }
 ```
 
 To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
 
-### Using `ListUpcomingGameNights`'s Query hook function
+### Using `ListGameNights`'s Query hook function
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
 import { connectorConfig } from '@dataconnect/generated';
-import { useListUpcomingGameNights } from '@dataconnect/generated/react'
+import { useListGameNights } from '@dataconnect/generated/react'
 
-export default function ListUpcomingGameNightsComponent() {
+export default function ListGameNightsComponent() {
   // You don't have to do anything to "execute" the Query.
   // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
-  const query = useListUpcomingGameNights();
+  const query = useListGameNights();
 
   // You can also pass in a `DataConnect` instance to the Query hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const query = useListUpcomingGameNights(dataConnect);
+  const query = useListGameNights(dataConnect);
 
   // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
   const options = { staleTime: 5 * 1000 };
-  const query = useListUpcomingGameNights(options);
+  const query = useListGameNights(options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = { staleTime: 5 * 1000 };
-  const query = useListUpcomingGameNights(dataConnect, options);
+  const query = useListGameNights(dataConnect, options);
 
   // Then, you can render your component dynamically based on the status of the Query.
   if (query.isPending) {
@@ -188,106 +281,77 @@ export default function ListUpcomingGameNightsComponent() {
 }
 ```
 
-## GetGameNightDetails
-You can execute the `GetGameNightDetails` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+## GetInvitations
+You can execute the `GetInvitations` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
-useGetGameNightDetails(dc: DataConnect, vars: GetGameNightDetailsVariables, options?: useDataConnectQueryOptions<GetGameNightDetailsData>): UseDataConnectQueryResult<GetGameNightDetailsData, GetGameNightDetailsVariables>;
+useGetInvitations(dc: DataConnect, vars: GetInvitationsVariables, options?: useDataConnectQueryOptions<GetInvitationsData>): UseDataConnectQueryResult<GetInvitationsData, GetInvitationsVariables>;
 ```
 You can also pass in a `DataConnect` instance to the Query hook function.
 ```javascript
-useGetGameNightDetails(vars: GetGameNightDetailsVariables, options?: useDataConnectQueryOptions<GetGameNightDetailsData>): UseDataConnectQueryResult<GetGameNightDetailsData, GetGameNightDetailsVariables>;
+useGetInvitations(vars: GetInvitationsVariables, options?: useDataConnectQueryOptions<GetInvitationsData>): UseDataConnectQueryResult<GetInvitationsData, GetInvitationsVariables>;
 ```
 
 ### Variables
-The `GetGameNightDetails` Query requires an argument of type `GetGameNightDetailsVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `GetInvitations` Query requires an argument of type `GetInvitationsVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
-export interface GetGameNightDetailsVariables {
+export interface GetInvitationsVariables {
   gameNightId: UUIDString;
 }
 ```
 ### Return Type
-Recall that calling the `GetGameNightDetails` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+Recall that calling the `GetInvitations` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetGameNightDetails` Query is of type `GetGameNightDetailsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetInvitations` Query is of type `GetInvitationsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
-export interface GetGameNightDetailsData {
-  gameNight?: {
+export interface GetInvitationsData {
+  gameNightInvitations: ({
     id: UUIDString;
-    name: string;
-    description?: string | null;
-    eventDate: DateString;
-    eventTime?: string | null;
-    isFinalized?: boolean | null;
-    creator: {
-      id: UUIDString;
-      displayName: string;
-    } & User_Key;
-      gameNightInvitations_on_gameNight: ({
-        invitee: {
-          id: UUIDString;
-          displayName: string;
-        } & User_Key;
-          status?: string | null;
-      })[];
-        gameNightProposals_on_gameNight: ({
-          id: UUIDString;
-          type: string;
-          game?: {
-            id: UUIDString;
-            title: string;
-          } & Game_Key;
-            foodItem?: {
-              id: UUIDString;
-              name: string;
-            } & FoodItem_Key;
-              votes_on_gameNightProposal: ({
-                user: {
-                  id: UUIDString;
-                  displayName: string;
-                } & User_Key;
-              })[];
-        } & GameNightProposal_Key)[];
-  } & GameNight_Key;
+    status: string;
+    user: {
+      username: string;
+      email?: string | null;
+    };
+  } & GameNightInvitation_Key)[];
 }
 ```
 
 To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
 
-### Using `GetGameNightDetails`'s Query hook function
+### Using `GetInvitations`'s Query hook function
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, GetGameNightDetailsVariables } from '@dataconnect/generated';
-import { useGetGameNightDetails } from '@dataconnect/generated/react'
+import { connectorConfig, GetInvitationsVariables } from '@dataconnect/generated';
+import { useGetInvitations } from '@dataconnect/generated/react'
 
-export default function GetGameNightDetailsComponent() {
-  // The `useGetGameNightDetails` Query hook requires an argument of type `GetGameNightDetailsVariables`:
-  const getGameNightDetailsVars: GetGameNightDetailsVariables = {
+export default function GetInvitationsComponent() {
+  // The `useGetInvitations` Query hook requires an argument of type `GetInvitationsVariables`:
+  const getInvitationsVars: GetInvitationsVariables = {
     gameNightId: ..., 
   };
 
   // You don't have to do anything to "execute" the Query.
   // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
-  const query = useGetGameNightDetails(getGameNightDetailsVars);
+  const query = useGetInvitations(getInvitationsVars);
   // Variables can be defined inline as well.
-  const query = useGetGameNightDetails({ gameNightId: ..., });
+  const query = useGetInvitations({ gameNightId: ..., });
 
   // You can also pass in a `DataConnect` instance to the Query hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const query = useGetGameNightDetails(dataConnect, getGameNightDetailsVars);
+  const query = useGetInvitations(dataConnect, getInvitationsVars);
 
   // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
   const options = { staleTime: 5 * 1000 };
-  const query = useGetGameNightDetails(getGameNightDetailsVars, options);
+  const query = useGetInvitations(getInvitationsVars, options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = { staleTime: 5 * 1000 };
-  const query = useGetGameNightDetails(dataConnect, getGameNightDetailsVars, options);
+  const query = useGetInvitations(dataConnect, getInvitationsVars, options);
 
   // Then, you can render your component dynamically based on the status of the Query.
   if (query.isPending) {
@@ -300,7 +364,7 @@ export default function GetGameNightDetailsComponent() {
 
   // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
   if (query.isSuccess) {
-    console.log(query.data.gameNight);
+    console.log(query.data.gameNightInvitations);
   }
   return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
 }
@@ -331,6 +395,104 @@ Here's a general overview of how to use the generated Mutation hooks in your cod
 
 Below are examples of how to use the `example` connector's generated Mutation hook functions to execute each Mutation. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#operations-react-angular).
 
+## CreateUser
+You can execute the `CreateUser` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useCreateUser(options?: useDataConnectMutationOptions<CreateUserData, FirebaseError, CreateUserVariables>): UseDataConnectMutationResult<CreateUserData, CreateUserVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useCreateUser(dc: DataConnect, options?: useDataConnectMutationOptions<CreateUserData, FirebaseError, CreateUserVariables>): UseDataConnectMutationResult<CreateUserData, CreateUserVariables>;
+```
+
+### Variables
+The `CreateUser` Mutation requires an argument of type `CreateUserVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface CreateUserVariables {
+  uid: string;
+  username: string;
+  email?: string | null;
+}
+```
+### Return Type
+Recall that calling the `CreateUser` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `CreateUser` Mutation is of type `CreateUserData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface CreateUserData {
+  user_insert: User_Key;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `CreateUser`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, CreateUserVariables } from '@dataconnect/generated';
+import { useCreateUser } from '@dataconnect/generated/react'
+
+export default function CreateUserComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useCreateUser();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useCreateUser(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useCreateUser(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useCreateUser(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useCreateUser` Mutation requires an argument of type `CreateUserVariables`:
+  const createUserVars: CreateUserVariables = {
+    uid: ..., 
+    username: ..., 
+    email: ..., // optional
+  };
+  mutation.mutate(createUserVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ uid: ..., username: ..., email: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(createUserVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_insert);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
 ## CreateGameNight
 You can execute the `CreateGameNight` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
@@ -346,11 +508,10 @@ The `CreateGameNight` Mutation requires an argument of type `CreateGameNightVari
 
 ```javascript
 export interface CreateGameNightVariables {
+  id: UUIDString;
   name: string;
-  description?: string | null;
-  eventDate: DateString;
-  eventTime?: string | null;
-  isFinalized?: boolean | null;
+  date: DateString;
+  creatorId: string;
 }
 ```
 ### Return Type
@@ -400,15 +561,14 @@ export default function CreateGameNightComponent() {
   // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
   // The `useCreateGameNight` Mutation requires an argument of type `CreateGameNightVariables`:
   const createGameNightVars: CreateGameNightVariables = {
+    id: ..., 
     name: ..., 
-    description: ..., // optional
-    eventDate: ..., 
-    eventTime: ..., // optional
-    isFinalized: ..., // optional
+    date: ..., 
+    creatorId: ..., 
   };
   mutation.mutate(createGameNightVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ name: ..., description: ..., eventDate: ..., eventTime: ..., isFinalized: ..., });
+  mutation.mutate({ id: ..., name: ..., date: ..., creatorId: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -433,84 +593,280 @@ export default function CreateGameNightComponent() {
 }
 ```
 
-## InviteToGameNight
-You can execute the `InviteToGameNight` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+## SuggestGame
+You can execute the `SuggestGame` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
-useInviteToGameNight(options?: useDataConnectMutationOptions<InviteToGameNightData, FirebaseError, InviteToGameNightVariables>): UseDataConnectMutationResult<InviteToGameNightData, InviteToGameNightVariables>;
+useSuggestGame(options?: useDataConnectMutationOptions<SuggestGameData, FirebaseError, SuggestGameVariables>): UseDataConnectMutationResult<SuggestGameData, SuggestGameVariables>;
 ```
 You can also pass in a `DataConnect` instance to the Mutation hook function.
 ```javascript
-useInviteToGameNight(dc: DataConnect, options?: useDataConnectMutationOptions<InviteToGameNightData, FirebaseError, InviteToGameNightVariables>): UseDataConnectMutationResult<InviteToGameNightData, InviteToGameNightVariables>;
+useSuggestGame(dc: DataConnect, options?: useDataConnectMutationOptions<SuggestGameData, FirebaseError, SuggestGameVariables>): UseDataConnectMutationResult<SuggestGameData, SuggestGameVariables>;
 ```
 
 ### Variables
-The `InviteToGameNight` Mutation requires an argument of type `InviteToGameNightVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `SuggestGame` Mutation requires an argument of type `SuggestGameVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
-export interface InviteToGameNightVariables {
-  gameNightId: UUIDString;
-  inviteeId: UUIDString;
+export interface SuggestGameVariables {
+  id: UUIDString;
+  title: string;
+  userId: string;
 }
 ```
 ### Return Type
-Recall that calling the `InviteToGameNight` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+Recall that calling the `SuggestGame` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
 
 To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
 
 To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
 
-To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `InviteToGameNight` Mutation is of type `InviteToGameNightData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SuggestGame` Mutation is of type `SuggestGameData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
-export interface InviteToGameNightData {
-  gameNightInvitation_insert: GameNightInvitation_Key;
+export interface SuggestGameData {
+  gameSuggestion_insert: GameSuggestion_Key;
 }
 ```
 
 To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
 
-### Using `InviteToGameNight`'s Mutation hook function
+### Using `SuggestGame`'s Mutation hook function
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, InviteToGameNightVariables } from '@dataconnect/generated';
-import { useInviteToGameNight } from '@dataconnect/generated/react'
+import { connectorConfig, SuggestGameVariables } from '@dataconnect/generated';
+import { useSuggestGame } from '@dataconnect/generated/react'
 
-export default function InviteToGameNightComponent() {
+export default function SuggestGameComponent() {
   // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
-  const mutation = useInviteToGameNight();
+  const mutation = useSuggestGame();
 
   // You can also pass in a `DataConnect` instance to the Mutation hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const mutation = useInviteToGameNight(dataConnect);
+  const mutation = useSuggestGame(dataConnect);
 
   // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
   const options = {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
-  const mutation = useInviteToGameNight(options);
+  const mutation = useSuggestGame(options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
-  const mutation = useInviteToGameNight(dataConnect, options);
+  const mutation = useSuggestGame(dataConnect, options);
 
   // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
-  // The `useInviteToGameNight` Mutation requires an argument of type `InviteToGameNightVariables`:
-  const inviteToGameNightVars: InviteToGameNightVariables = {
-    gameNightId: ..., 
-    inviteeId: ..., 
+  // The `useSuggestGame` Mutation requires an argument of type `SuggestGameVariables`:
+  const suggestGameVars: SuggestGameVariables = {
+    id: ..., 
+    title: ..., 
+    userId: ..., 
   };
-  mutation.mutate(inviteToGameNightVars);
+  mutation.mutate(suggestGameVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ gameNightId: ..., inviteeId: ..., });
+  mutation.mutate({ id: ..., title: ..., userId: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
-  mutation.mutate(inviteToGameNightVars, options);
+  mutation.mutate(suggestGameVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.gameSuggestion_insert);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## ProposeGameForNight
+You can execute the `ProposeGameForNight` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useProposeGameForNight(options?: useDataConnectMutationOptions<ProposeGameForNightData, FirebaseError, ProposeGameForNightVariables>): UseDataConnectMutationResult<ProposeGameForNightData, ProposeGameForNightVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useProposeGameForNight(dc: DataConnect, options?: useDataConnectMutationOptions<ProposeGameForNightData, FirebaseError, ProposeGameForNightVariables>): UseDataConnectMutationResult<ProposeGameForNightData, ProposeGameForNightVariables>;
+```
+
+### Variables
+The `ProposeGameForNight` Mutation requires an argument of type `ProposeGameForNightVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ProposeGameForNightVariables {
+  gameNightId: UUIDString;
+  suggestionId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `ProposeGameForNight` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `ProposeGameForNight` Mutation is of type `ProposeGameForNightData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ProposeGameForNightData {
+  gameNightProposal_insert: GameNightProposal_Key;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `ProposeGameForNight`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, ProposeGameForNightVariables } from '@dataconnect/generated';
+import { useProposeGameForNight } from '@dataconnect/generated/react'
+
+export default function ProposeGameForNightComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useProposeGameForNight();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useProposeGameForNight(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useProposeGameForNight(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useProposeGameForNight(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useProposeGameForNight` Mutation requires an argument of type `ProposeGameForNightVariables`:
+  const proposeGameForNightVars: ProposeGameForNightVariables = {
+    gameNightId: ..., 
+    suggestionId: ..., 
+  };
+  mutation.mutate(proposeGameForNightVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ gameNightId: ..., suggestionId: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(proposeGameForNightVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.gameNightProposal_insert);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## InviteUser
+You can execute the `InviteUser` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useInviteUser(options?: useDataConnectMutationOptions<InviteUserData, FirebaseError, InviteUserVariables>): UseDataConnectMutationResult<InviteUserData, InviteUserVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useInviteUser(dc: DataConnect, options?: useDataConnectMutationOptions<InviteUserData, FirebaseError, InviteUserVariables>): UseDataConnectMutationResult<InviteUserData, InviteUserVariables>;
+```
+
+### Variables
+The `InviteUser` Mutation requires an argument of type `InviteUserVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface InviteUserVariables {
+  id: UUIDString;
+  gameNightId: UUIDString;
+  userId: string;
+}
+```
+### Return Type
+Recall that calling the `InviteUser` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `InviteUser` Mutation is of type `InviteUserData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface InviteUserData {
+  gameNightInvitation_insert: GameNightInvitation_Key;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `InviteUser`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, InviteUserVariables } from '@dataconnect/generated';
+import { useInviteUser } from '@dataconnect/generated/react'
+
+export default function InviteUserComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useInviteUser();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useInviteUser(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useInviteUser(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useInviteUser(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useInviteUser` Mutation requires an argument of type `InviteUserVariables`:
+  const inviteUserVars: InviteUserVariables = {
+    id: ..., 
+    gameNightId: ..., 
+    userId: ..., 
+  };
+  mutation.mutate(inviteUserVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ id: ..., gameNightId: ..., userId: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(inviteUserVars, options);
 
   // Then, you can render your component dynamically based on the status of the Mutation.
   if (mutation.isPending) {
