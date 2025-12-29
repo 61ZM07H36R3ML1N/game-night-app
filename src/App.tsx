@@ -17,7 +17,7 @@ import {
 } from 'firebase/firestore';
 import { MessageCircle, Send, LogOut, Swords, Calendar as CalendarIcon } from 'lucide-react';
 import Confetti from 'react-confetti';
-import toast, { Toaster } from 'react-hot-toast'; // <--- NEW: Toasts
+import toast, { Toaster } from 'react-hot-toast';
 import './App.css';
 
 // --- TYPES ---
@@ -26,7 +26,7 @@ interface MenuItem {
   name: string;
   category: string;
   votes: number;
-  votedBy: string[]; // <--- NEW: Track who voted
+  votedBy: string[];
   description: string;
 }
 
@@ -34,7 +34,7 @@ interface GameSuggestion {
   id: string;
   title: string;
   votes: number;
-  votedBy: string[]; // <--- NEW: Track who voted
+  votedBy: string[];
   suggestedBy: string;
 }
 
@@ -45,17 +45,19 @@ interface ChatMessage {
   createdAt: any;
 }
 
+type Tab = 'menu' | 'games' | 'chat';
+
 const GameNightApp = () => {
   // --- STATE ---
   const [user, setUser] = useState<string>(() => localStorage.getItem('gn_user') || '');
-  const [activeTab, setActiveTab] = useState('menu');
+  const [activeTab, setActiveTab] = useState<Tab>('menu');
   const [loading, setLoading] = useState(true);
   
   // Data State
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [suggestions, setSuggestions] = useState<GameSuggestion[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [gameDate, setGameDate] = useState(''); // <--- NEW: Date State
+  const [gameDate, setGameDate] = useState('');
   
   // Input State
   const [tempName, setTempName] = useState('');
@@ -64,42 +66,36 @@ const GameNightApp = () => {
   const [newSuggestion, setNewSuggestion] = useState('');
   const [newMessage, setNewMessage] = useState('');
 
-  // Juice State
+  // UI State
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowDimension, setWindowDimension] = useState({ width: window.innerWidth, height: window.innerHeight });
-
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   // --- EFFECTS ---
 
-  // 1. Resize Listener
   useEffect(() => {
     const handleResize = () => setWindowDimension({ width: window.innerWidth, height: window.innerHeight });
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 2. Firebase Listeners
   useEffect(() => {
     setLoading(true);
 
-    // Listen to Date Config
     const unsubDate = onSnapshot(doc(db, 'config', 'main'), (doc) => {
       if (doc.exists()) {
         setGameDate(doc.data().nextSession || '');
       }
     });
 
-    // Listen to Menu
     const unsubMenu = onSnapshot(query(collection(db, 'menu'), orderBy('votes', 'desc')), (snapshot) => {
       setMenuItems(snapshot.docs.map(doc => ({ 
         id: doc.id, 
         ...doc.data(),
-        votedBy: doc.data().votedBy || [] // Handle legacy items
+        votedBy: doc.data().votedBy || [] 
       } as MenuItem)));
     });
 
-    // Listen to Games
     const unsubGames = onSnapshot(query(collection(db, 'games'), orderBy('votes', 'desc')), (snapshot) => {
       setSuggestions(snapshot.docs.map(doc => ({ 
         id: doc.id, 
@@ -108,7 +104,6 @@ const GameNightApp = () => {
       } as GameSuggestion)));
     });
 
-    // Listen to Chat
     const unsubChat = onSnapshot(query(collection(db, 'messages'), orderBy('createdAt', 'asc')), (snapshot) => {
       setMessages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ChatMessage)));
       setLoading(false);
@@ -117,19 +112,18 @@ const GameNightApp = () => {
     return () => { unsubMenu(); unsubGames(); unsubChat(); unsubDate(); };
   }, []);
 
-  // Auto-scroll chat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, activeTab]);
 
-  // --- ACTIONS ---
+  // --- HANDLERS ---
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!tempName.trim()) return;
     localStorage.setItem('gn_user', tempName);
     setUser(tempName);
-    toast.success(`Welcome to the party, ${tempName}!`); // <--- NEW Toast
+    toast.success(`Welcome to the party, ${tempName}!`);
     
     addDoc(collection(db, 'messages'), {
       text: `${tempName} joined the party!`,
@@ -144,36 +138,31 @@ const GameNightApp = () => {
     toast('See ya later!', { icon: '👋' });
   };
 
-  // --- NEW: DATE PICKER LOGIC ---
   const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value;
     setGameDate(newDate);
-    // Save to 'config/main' document
     await setDoc(doc(db, 'config', 'main'), { nextSession: newDate }, { merge: true });
     toast.success('Date updated!');
   };
 
-  // --- UPDATED: VOTE TOGGLE (ANTI-RIGGING) ---
   const handleVote = async (collectionName: string, id: string, votedBy: string[] = []) => {
     const itemRef = doc(db, collectionName, id);
     const hasVoted = votedBy.includes(user);
 
     try {
       if (hasVoted) {
-        // REMOVE VOTE
         await updateDoc(itemRef, {
           votes: increment(-1),
           votedBy: arrayRemove(user)
         });
         toast('Vote removed', { icon: '↩️' });
       } else {
-        // ADD VOTE
-        // Play Sound
+        // Play Sound (Optional)
         try {
           const audio = new Audio('/pop_1.mp3');
           audio.volume = 0.5; 
           audio.play();
-        } catch (e) { console.log("Audio error", e); }
+        } catch (e) { /* silent fail */ }
 
         await updateDoc(itemRef, {
           votes: increment(1),
@@ -187,14 +176,13 @@ const GameNightApp = () => {
     }
   };
 
-  const handleAddMenuItem = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddMenuItem = async () => {
     if (!newMenuItem.trim()) return;
     await addDoc(collection(db, 'menu'), {
       name: newMenuItem,
       category: menuCategory,
       votes: 1,
-      votedBy: [user], // Auto-vote for your own suggestion
+      votedBy: [user],
       description: 'Added by ' + user,
       createdAt: serverTimestamp()
     });
@@ -202,13 +190,12 @@ const GameNightApp = () => {
     toast.success('Added to Menu!');
   };
 
-  const handleAddSuggestion = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddSuggestion = async () => {
     if (!newSuggestion.trim()) return;
     await addDoc(collection(db, 'games'), {
       title: newSuggestion,
       votes: 1,
-      votedBy: [user], // Auto-vote
+      votedBy: [user],
       suggestedBy: user,
       createdAt: serverTimestamp()
     });
@@ -290,29 +277,33 @@ const GameNightApp = () => {
 
   // --- RENDER ---
 
+  // LOGIN VIEW (Glassy Login)
   if (!user) {
     return (
-      <div className="app-container">
+      <div className="app-layout">
         <Toaster position="top-center" />
-        <div className="app-header">
-          <h1>🎲 Game Night</h1>
-          <p>Live Voting App</p>
-        </div>
-        <div className="login-screen">
-          <div className="login-content">
-            <span className="login-icon">👋</span>
-            <h2>Welcome!</h2>
-            <p className="login-hint">Who is joining the party?</p>
-            <form onSubmit={handleJoin} className="login-form">
+        <div className="app-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <header className="glass-header" style={{ width: '100%', borderRadius: '24px 24px 0 0' }}>
+             <div className="title-row">
+               <span style={{ fontSize: '2.5rem' }}>🎲</span>
+               <h1>Game Night</h1>
+             </div>
+          </header>
+          
+          <div style={{ padding: '40px 20px', width: '100%', textAlign: 'center' }}>
+            <h2 style={{ marginBottom: '20px' }}>Who's joining?</h2>
+            <form onSubmit={handleJoin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <input 
-                className="login-input"
+                className="glass-input"
                 type="text" 
                 placeholder="Enter your name..." 
                 value={tempName}
                 onChange={(e) => setTempName(e.target.value)}
                 autoFocus
               />
-              <button type="submit" className="join-btn">Join Party</button>
+              <button type="submit" className="glass-btn-add" style={{ width: '100%' }}>
+                Join Party
+              </button>
             </form>
           </div>
         </div>
@@ -320,188 +311,235 @@ const GameNightApp = () => {
     );
   }
 
+  // MAIN APP VIEW
   return (
-    <div className="app-container">
+    <div className="app-layout">
       <Toaster position="top-center" />
       {showConfetti && <Confetti width={windowDimension.width} height={windowDimension.height} />}
-
-      {/* Header */}
-      <div className="app-header">
-        <h1>🎲 Game Night</h1>
+      
+      <div className="app-container">
         
-        {/* NEW: Date Picker */}
-        <div className="date-picker-container" style={{ margin: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <CalendarIcon size={18} color="#fbbf24" />
-          <input 
-            type="date" 
-            value={gameDate} 
-            onChange={handleDateChange}
-            style={{ 
-              background: '#333', 
-              border: '1px solid #555', 
-              color: 'white', 
-              padding: '4px 8px', 
-              borderRadius: '4px' 
-            }} 
-          />
-        </div>
+        {/* 1. Header Section */}
+        <header className="glass-header">
+          <div className="title-row">
+            <span style={{ fontSize: '2.5rem' }}>🎲</span>
+            <h1>Game Night</h1>
+          </div>
+          <div className="date-wrapper">
+             <input 
+               type="date" 
+               className="date-picker-styled"
+               value={gameDate}
+               onChange={handleDateChange}
+             />
+          </div>
+        </header>
 
+        {/* 2. User Bar */}
         <div className="user-bar">
-          <p>Hi, <strong>{user}</strong></p>
-          <button onClick={handleLogout} className="logout-btn" title="Logout">
-            <LogOut size={16} />
-            <span>Exit</span>
+          <span style={{ fontSize: '1.1rem' }}>Hi, <strong>{user}</strong></span>
+          <button onClick={handleLogout} className="glass-btn-exit" style={{ 
+              background: 'rgba(255,255,255,0.1)', 
+              border: 'none', 
+              color: '#ccc', 
+              padding: '6px 12px', 
+              borderRadius: '8px', 
+              cursor: 'pointer',
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '6px'
+          }}>
+            <LogOut size={16} /> Exit
           </button>
         </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="tabs" style={{ padding: '0 16px'}}>
-        <button className={`tab-btn ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>🍕 Menu</button>
-        <button className={`tab-btn ${activeTab === 'games' ? 'active' : ''}`} onClick={() => setActiveTab('games')}>🎮 Games</button>
-        <button className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>💬 Chat</button>
-      </div>
+        {/* 3. Navigation Tabs */}
+        <nav className="nav-tabs">
+          <button className={`tab ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>🍕 Menu</button>
+          <button className={`tab ${activeTab === 'games' ? 'active' : ''}`} onClick={() => setActiveTab('games')}>🎮 Games</button>
+          <button className={`tab ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>💬 Chat</button>
+        </nav>
 
-      {/* Content */}
-      <div className="content-area">
-        {loading && <p className="loading">Loading data...</p>}
+        {/* 4. Main Content Area */}
+        <main className="content-area">
+          {loading && <p style={{ textAlign: 'center', marginTop: '20px', color: '#888' }}>Loading...</p>}
 
-        {/* MENU VIEW */}
-        {!loading && activeTab === 'menu' && (
-          <div className="list-container" style={{ padding: '0 16px' }}>
-            <form onSubmit={handleAddMenuItem} className="input-group">
-              <input type="text" value={newMenuItem} onChange={(e) => setNewMenuItem(e.target.value)} placeholder="Suggest food..." />
-              <select className="category-select" value={menuCategory} onChange={(e) => setMenuCategory(e.target.value)}>
-                <option value="Food">Food</option>
-                <option value="Drink">Drink</option>
-                <option value="Snack">Snack</option>
-              </select>
-              <button type="submit">+</button>
-            </form>
-
-            {menuItems.map((item) => {
-              const hasVoted = item.votedBy?.includes(user);
-              return (
-                <div key={item.id} className="card menu-card">
-                  <div className="card-info">
-                    <h3>{item.name}</h3>
-                    <span className="badge">{item.category}</span>
-                    <p>{item.description}</p>
-                  </div>
-                  <button 
-                    className={`vote-btn ${hasVoted ? 'voted' : ''}`} 
-                    onClick={() => handleVote('menu', item.id, item.votedBy)}
-                    style={hasVoted ? { backgroundColor: '#10b981', color: 'white' } : {}}
-                  >
-                    {hasVoted ? '✅' : '👍'} {item.votes}
-                  </button>
-                </div>
-              );
-            })}
-            
-            {menuItems.length > 3 && (
-              <button className="runoff-btn" onClick={handleRunoff}>
-                <Swords size={18} /> Runoff (Top 3)
-              </button>
-            )}
-            
-            {menuItems.length === 0 && <button onClick={seedMenu} className="seed-btn">Load Default Menu</button>}
-          </div>
-        )}
-
-        {/* GAMES VIEW */}
-        {!loading && activeTab === 'games' && (
-          <div className="list-container">
-            <form onSubmit={handleAddSuggestion} className="input-group">
-              <input type="text" value={newSuggestion} onChange={(e) => setNewSuggestion(e.target.value)} placeholder="Suggest a game..." />
-              <button type="submit">+</button>
-            </form>
-
-            {suggestions.map((game) => {
-              const hasVoted = game.votedBy?.includes(user);
-              return (
-                <div key={game.id} className="card game-card">
-                  <div className="card-info">
-                    <span className="game-title" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{game.title}</span>
-                    {game.suggestedBy && <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>By: {game.suggestedBy}</p>}
-                  </div>
-                  <button 
-                    className={`vote-btn ${hasVoted ? 'voted' : ''}`} 
-                    onClick={() => handleVote('games', game.id, game.votedBy)}
-                    style={hasVoted ? { backgroundColor: '#10b981', color: 'white' } : {}}
-                  >
-                    {hasVoted ? '✅' : '👍'} {game.votes}
-                  </button>
-                </div>
-              );
-            })}
-
-            {suggestions.length > 3 && (
-              <button className="runoff-btn" onClick={handleRunoff}>
-                <Swords size={18} /> Runoff (Top 3)
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* CHAT VIEW */}
-        {!loading && activeTab === 'chat' && (
-          <>
-            <div className="chat-container" style= {{ padding: '0 16px'}}>
-              {messages.length === 0 && (
-                <div style={{ textAlign: 'center', opacity: 0.5, marginTop: '50px' }}>
-                  <MessageCircle size={48} style={{ margin: '0 auto 10px', display: 'block' }} />
-                  <p>No messages yet. Start the chat!</p>
-                </div>
-              )}
+          {/* MENU & GAMES INPUTS */}
+          {!loading && activeTab !== 'chat' && (
+            <div className="action-bar">
+              <input
+                type="text"
+                className="glass-input"
+                placeholder={activeTab === 'menu' ? "Suggest food..." : "Suggest a game..."}
+                value={activeTab === 'menu' ? newMenuItem : newSuggestion}
+                onChange={(e) => activeTab === 'menu' ? setNewMenuItem(e.target.value) : setNewSuggestion(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && (activeTab === 'menu' ? handleAddMenuItem() : handleAddSuggestion())}
+              />
               
-              {messages.map((msg) => {
-                const isMe = msg.sender === user;
-                const isSystem = msg.sender === 'System';
-                
-                if (isSystem) {
+              {activeTab === 'menu' && (
+                <select 
+                  className="glass-select"
+                  value={menuCategory}
+                  onChange={(e) => setMenuCategory(e.target.value)}
+                >
+                  <option value="Food">Food</option>
+                  <option value="Snack">Snack</option>
+                  <option value="Drink">Drink</option>
+                </select>
+              )}
+
+              <button 
+                onClick={activeTab === 'menu' ? handleAddMenuItem : handleAddSuggestion} 
+                className="glass-btn-add"
+              >
+                +
+              </button>
+            </div>
+          )}
+
+          {/* LISTS (MENU / GAMES) */}
+          <div className="list-container">
+            
+            {/* MENU LIST */}
+            {!loading && activeTab === 'menu' && (
+              <>
+                {menuItems.length === 0 && (
+                   <div className="empty-state">
+                      <p>No snacks yet. Feed the gremlins!</p>
+                      <button onClick={seedMenu} style={{ marginTop: '10px', background: 'transparent', border: '1px solid #555', color: '#aaa', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>Load Defaults</button>
+                   </div>
+                )}
+                {menuItems.map((item) => {
+                  const hasVoted = item.votedBy?.includes(user);
                   return (
-                    <div key={msg.id} style={{ textAlign: 'center', margin: '15px 0', opacity: 0.8, fontSize: '0.85rem', color: '#fbbf24' }}>
-                      {msg.text}
+                    <div key={item.id} className="glass-item">
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 'bold', fontSize: '1.05rem' }}>{item.name}</div>
+                        <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>{item.category} • {item.description}</div>
+                      </div>
+                      <button 
+                        className={`vote-pill ${hasVoted ? 'voted' : ''}`} 
+                        onClick={() => handleVote('menu', item.id, item.votedBy)}
+                        style={{ 
+                           background: hasVoted ? '#10b981' : 'rgba(255,255,255,0.1)', 
+                           border: 'none',
+                           color: 'white',
+                           padding: '6px 12px',
+                           borderRadius: '20px',
+                           cursor: 'pointer',
+                           fontWeight: 'bold',
+                           minWidth: '60px'
+                        }}
+                      >
+                         {hasVoted ? '✅' : '👍'} {item.votes}
+                      </button>
                     </div>
                   );
-                }
+                })}
+              </>
+            )}
 
-                return (
-                  <div key={msg.id} className={`message-bubble ${isMe ? 'message-mine' : 'message-other'}`}>
-                    {!isMe && <span className="message-sender">{msg.sender}</span>}
-                    {msg.text}
-                  </div>
-                );
-              })}
-              <div ref={messagesEndRef} />
-            </div>
+            {/* GAMES LIST */}
+            {!loading && activeTab === 'games' && (
+              <>
+                 {suggestions.length === 0 && <div className="empty-state"><p>No games suggested.</p></div>}
+                 {suggestions.map((game) => {
+                  const hasVoted = game.votedBy?.includes(user);
+                  return (
+                    <div key={game.id} className="glass-item">
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 'bold', fontSize: '1.05rem' }}>{game.title}</div>
+                        <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>Suggested by {game.suggestedBy}</div>
+                      </div>
+                      <button 
+                        className={`vote-pill ${hasVoted ? 'voted' : ''}`} 
+                        onClick={() => handleVote('games', game.id, game.votedBy)}
+                        style={{ 
+                           background: hasVoted ? '#10b981' : 'rgba(255,255,255,0.1)', 
+                           border: 'none',
+                           color: 'white',
+                           padding: '6px 12px',
+                           borderRadius: '20px',
+                           cursor: 'pointer',
+                           fontWeight: 'bold',
+                           minWidth: '60px'
+                        }}
+                      >
+                         {hasVoted ? '✅' : '👍'} {game.votes}
+                      </button>
+                    </div>
+                  );
+                })}
+              </>
+            )}
 
-            <form onSubmit={handleSendMessage} className="chat-input-area">
-              <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." />
-              <button type="submit" className="send-btn"><Send size={20} /></button>
-            </form>
-          </>
-        )}
+            {/* CHAT LIST */}
+            {!loading && activeTab === 'chat' && (
+              <div className="chat-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '10px' }}>
+                   {messages.length === 0 && (
+                      <div className="empty-state">
+                        <MessageCircle size={32} style={{ marginBottom: '10px', opacity: 0.5 }} />
+                        <p>Start the chat!</p>
+                      </div>
+                   )}
+                   {messages.map((msg) => {
+                      const isMe = msg.sender === user;
+                      const isSystem = msg.sender === 'System';
+                      if (isSystem) return <div key={msg.id} style={{ textAlign: 'center', fontSize: '0.8rem', opacity: 0.6, margin: '10px 0' }}>{msg.text}</div>;
+                      
+                      return (
+                        <div key={msg.id} style={{ 
+                           display: 'flex', 
+                           justifyContent: isMe ? 'flex-end' : 'flex-start', 
+                           marginBottom: '8px' 
+                        }}>
+                           <div style={{ 
+                              background: isMe ? '#7c3aed' : 'rgba(255,255,255,0.1)', 
+                              padding: '8px 12px', 
+                              borderRadius: '12px', 
+                              borderBottomRightRadius: isMe ? '2px' : '12px',
+                              borderBottomLeftRadius: isMe ? '12px' : '2px',
+                              maxWidth: '75%'
+                           }}>
+                              {!isMe && <div style={{ fontSize: '0.7rem', opacity: 0.6, marginBottom: '2px' }}>{msg.sender}</div>}
+                              <div>{msg.text}</div>
+                           </div>
+                        </div>
+                      );
+                   })}
+                   <div ref={messagesEndRef} />
+                </div>
+                
+                <form onSubmit={handleSendMessage} className="action-bar" style={{ padding: '10px 0 0 0' }}>
+                   <input type="text" className="glass-input" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type message..." />
+                   <button type="submit" className="glass-btn-add"><Send size={18} /></button>
+                </form>
+              </div>
+            )}
+            
+            {/* Runoff Button (Only show if needed) */}
+            {!loading && activeTab !== 'chat' && (activeTab === 'menu' ? menuItems.length : suggestions.length) > 3 && (
+               <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                  <button onClick={handleRunoff} className="glass-btn-exit" style={{ 
+                      background: 'rgba(251, 191, 36, 0.2)', 
+                      color: '#fbbf24', 
+                      border: '1px solid rgba(251, 191, 36, 0.5)' 
+                  }}>
+                    <Swords size={16} style={{ marginRight: '5px' }} /> Runoff Vote (Top 3)
+                  </button>
+               </div>
+            )}
 
-        {/* Footer / Admin Zone */}
-        <div style={{ marginTop: '50px', padding: '20px', borderTop: '1px solid #333', textAlign: 'center', opacity: 0.6 }}>
-          <p style={{ fontSize: '0.8rem', marginBottom: '10px' }}>Admin Zone</p>
-          <button 
-            onClick={handleResetNight}
-            style={{ 
-              backgroundColor: '#dc2626', 
-              color: 'white', 
-              padding: '8px 16px', 
-              borderRadius: '6px', 
-              border: 'none', 
-              fontSize: '0.9rem',
-              cursor: 'pointer' 
-            }}
-          >
-            💣 Reset Night
-          </button>
-        </div>
+          </div>
+        </main>
+
+        {/* 5. Admin Footer */}
+        <footer className="admin-footer">
+           <button onClick={handleResetNight} className="btn-danger-ghost">
+             💣 Reset Night
+           </button>
+        </footer>
 
       </div>
     </div>
