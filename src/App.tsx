@@ -14,7 +14,6 @@ import {
   arrayRemove,
   increment,
   setDoc,
-  getDoc
 } from 'firebase/firestore';
 import { MessageCircle, Send, LogOut, Swords, Calendar as CalendarIcon } from 'lucide-react';
 import Confetti from 'react-confetti';
@@ -236,7 +235,6 @@ const GameNightApp = () => {
     setTimeout(() => setShowConfetti(false), 8000);
 
     const collectionName = activeTab === 'menu' ? 'menu' : 'games';
-    const top3 = list.slice(0, 3).map(i => i.id);
     const losers = list.slice(3);
 
     losers.forEach(async (item) => {
