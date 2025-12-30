@@ -13,7 +13,8 @@ import {
   arrayUnion,
   arrayRemove,
   increment,
-  setDoc
+  setDoc,
+  getDocs
 } from 'firebase/firestore';
 import { MessageCircle, Send, LogOut, Swords, Calendar as CalendarIcon, Plus } from 'lucide-react';
 import Confetti from 'react-confetti';
@@ -271,8 +272,11 @@ const GameNightApp = () => {
     try {
       const clearCollection = async (name: string) => {
         const q = query(collection(db, name));
-        const snapshot = await (await import('firebase/firestore')).getDocs(q);
-        snapshot.forEach((doc) => deleteDoc(doc.ref));
+        const snapshot = await getDocs(q); // <--- Now uses the real tool
+        
+        // Delete them one by one
+        const deletePromises = snapshot.docs.map((doc) => deleteDoc(doc.ref));
+        await Promise.all(deletePromises);
       };
 
       await Promise.all([
@@ -283,7 +287,8 @@ const GameNightApp = () => {
 
       toast.success("💥 Board cleared!");
     } catch (error) {
-      toast.error("Reset failed.");
+      console.error("Reset Error:", error);
+      toast.error("Reset failed. Check console.");
     } finally {
       setLoading(false);
     }
