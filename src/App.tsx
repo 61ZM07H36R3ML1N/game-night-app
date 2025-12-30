@@ -286,7 +286,7 @@ const GameNightApp = () => {
           <header className="glass-header" style={{ width: '100%', borderRadius: '24px 24px 0 0' }}>
              <div className="title-row">
                <span style={{ fontSize: '2.5rem' }}>🎲</span>
-               <h1>Game Night</h1>
+               <h1 className='app-title'>Game Night Hub</h1>
              </div>
           </header>
           
