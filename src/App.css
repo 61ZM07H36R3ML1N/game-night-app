@@ -16,10 +16,11 @@ body {
 
 /* APP CONTAINER */
 .app-container {
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;          /* Force full width */
+  max-width: 100%;      /* Remove the 600px limit */
+  margin: 0;            /* Remove centering margins */
   min-height: 100vh;
-  /* Glass container for the whole app on large screens */
+  /* Glass container for the whole app */
   background: rgba(0, 0, 0, 0.2); 
   display: flex;
   flex-direction: column;
