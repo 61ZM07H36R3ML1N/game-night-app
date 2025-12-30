@@ -13,9 +13,9 @@ import {
   arrayUnion,
   arrayRemove,
   increment,
-  setDoc,
+  setDoc
 } from 'firebase/firestore';
-import { MessageCircle, Send, LogOut, Swords } from 'lucide-react';
+import { MessageCircle, Send, LogOut, Swords, Calendar as CalendarIcon, Plus } from 'lucide-react';
 import Confetti from 'react-confetti';
 import toast, { Toaster } from 'react-hot-toast';
 import './App.css';
@@ -45,12 +45,9 @@ interface ChatMessage {
   createdAt: any;
 }
 
-type Tab = 'menu' | 'games' | 'chat';
-
 const GameNightApp = () => {
-  // --- STATE ---
   const [user, setUser] = useState<string>(() => localStorage.getItem('gn_user') || '');
-  const [activeTab, setActiveTab] = useState<Tab>('menu');
+  const [activeTab, setActiveTab] = useState('menu');
   const [loading, setLoading] = useState(true);
   
   // Data State
@@ -66,12 +63,11 @@ const GameNightApp = () => {
   const [newSuggestion, setNewSuggestion] = useState('');
   const [newMessage, setNewMessage] = useState('');
 
-  // UI State
+  // Juice State
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowDimension, setWindowDimension] = useState({ width: window.innerWidth, height: window.innerHeight });
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
-  // --- EFFECTS ---
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
     const handleResize = () => setWindowDimension({ width: window.innerWidth, height: window.innerHeight });
@@ -81,26 +77,19 @@ const GameNightApp = () => {
 
   useEffect(() => {
     setLoading(true);
-
     const unsubDate = onSnapshot(doc(db, 'config', 'main'), (doc) => {
-      if (doc.exists()) {
-        setGameDate(doc.data().nextSession || '');
-      }
+      if (doc.exists()) setGameDate(doc.data().nextSession || '');
     });
 
     const unsubMenu = onSnapshot(query(collection(db, 'menu'), orderBy('votes', 'desc')), (snapshot) => {
       setMenuItems(snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data(),
-        votedBy: doc.data().votedBy || [] 
+        id: doc.id, ...doc.data(), votedBy: doc.data().votedBy || [] 
       } as MenuItem)));
     });
 
     const unsubGames = onSnapshot(query(collection(db, 'games'), orderBy('votes', 'desc')), (snapshot) => {
       setSuggestions(snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data(),
-        votedBy: doc.data().votedBy || [] 
+        id: doc.id, ...doc.data(), votedBy: doc.data().votedBy || [] 
       } as GameSuggestion)));
     });
 
@@ -116,17 +105,34 @@ const GameNightApp = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, activeTab]);
 
-  // --- HANDLERS ---
+  // --- ACTIONS ---
+
+  // VALIDATION HELPER
+  const isValidInput = (text: string) => {
+    if (text.length > 40) {
+      toast.error("Too long! Keep it under 40 chars.");
+      return false;
+    }
+    // Check for links (http, https, www, .com)
+    const linkRegex = /(http|https|www|\.com|\.net|\.org)/i;
+    if (linkRegex.test(text)) {
+      toast.error("No links allowed! 🛡️");
+      return false;
+    }
+    return true;
+  };
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!tempName.trim()) return;
+    if (!isValidInput(tempName)) return;
+
     localStorage.setItem('gn_user', tempName);
     setUser(tempName);
-    toast.success(`Welcome to the party, ${tempName}!`);
+    toast.success(`Welcome, ${tempName}!`);
     
     addDoc(collection(db, 'messages'), {
-      text: `${tempName} joined the party!`,
+      text: `${tempName} joined!`,
       sender: 'System',
       createdAt: serverTimestamp()
     });
@@ -145,39 +151,41 @@ const GameNightApp = () => {
     toast.success('Date updated!');
   };
 
+  // --- UPDATED VOTE LOGIC (MAX 3) ---
   const handleVote = async (collectionName: string, id: string, votedBy: string[] = []) => {
     const itemRef = doc(db, collectionName, id);
     const hasVoted = votedBy.includes(user);
 
-    try {
-      if (hasVoted) {
-        await updateDoc(itemRef, {
-          votes: increment(-1),
-          votedBy: arrayRemove(user)
-        });
-        toast('Vote removed', { icon: '↩️' });
-      } else {
-        // Play Sound (Optional)
-        try {
-          const audio = new Audio('/pop_1.mp3');
-          audio.volume = 0.5; 
-          audio.play();
-        } catch (e) { /* silent fail */ }
+    if (hasVoted) {
+      // Remove Vote
+      await updateDoc(itemRef, { votes: increment(-1), votedBy: arrayRemove(user) });
+      toast('Vote removed', { icon: '↩️' });
+    } else {
+      // Check User's Current Vote Count
+      const list = collectionName === 'menu' ? menuItems : suggestions;
+      const myVotes = list.filter(i => i.votedBy?.includes(user)).length;
 
-        await updateDoc(itemRef, {
-          votes: increment(1),
-          votedBy: arrayUnion(user)
-        });
-        toast.success('Voted!');
+      if (myVotes >= 3) {
+        return toast.error("You only have 3 votes! Uncheck something else first.");
       }
-    } catch (error) {
-      console.error("Vote failed:", error);
-      toast.error("Voting failed. Try again.");
+
+      // Add Vote
+      try {
+        const audio = new Audio('/pop.mp3');
+        audio.volume = 0.5; 
+        audio.play();
+      } catch (e) { console.log("Audio error", e); }
+
+      await updateDoc(itemRef, { votes: increment(1), votedBy: arrayUnion(user) });
+      toast.success('Voted!');
     }
   };
 
-  const handleAddMenuItem = async () => {
+  const handleAddMenuItem = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!newMenuItem.trim()) return;
+    if (!isValidInput(newMenuItem)) return;
+
     await addDoc(collection(db, 'menu'), {
       name: newMenuItem,
       category: menuCategory,
@@ -190,8 +198,11 @@ const GameNightApp = () => {
     toast.success('Added to Menu!');
   };
 
-  const handleAddSuggestion = async () => {
+  const handleAddSuggestion = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!newSuggestion.trim()) return;
+    if (!isValidInput(newSuggestion)) return;
+
     await addDoc(collection(db, 'games'), {
       title: newSuggestion,
       votes: 1,
@@ -206,6 +217,8 @@ const GameNightApp = () => {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
+    if (!isValidInput(newMessage)) return;
+
     await addDoc(collection(db, 'messages'), {
       text: newMessage,
       sender: user,
@@ -222,6 +235,7 @@ const GameNightApp = () => {
     setTimeout(() => setShowConfetti(false), 8000);
 
     const collectionName = activeTab === 'menu' ? 'menu' : 'games';
+    const top3 = list.slice(0, 3).map(i => i.id); // Kept for logic reference
     const losers = list.slice(3);
 
     losers.forEach(async (item) => {
@@ -275,35 +289,29 @@ const GameNightApp = () => {
     }
   };
 
-  // --- RENDER ---
-
-  // LOGIN VIEW (Glassy Login)
   if (!user) {
     return (
-      <div className="app-layout">
+      <div className="app-container">
         <Toaster position="top-center" />
-        <div className="app-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <header className="glass-header" style={{ width: '100%', borderRadius: '24px 24px 0 0' }}>
-             <div className="title-row">
-               <span style={{ fontSize: '2.5rem' }}>🎲</span>
-               <h1 className='app-title'>Game Night Hub</h1>
-             </div>
-          </header>
-          
-          <div style={{ padding: '40px 20px', width: '100%', textAlign: 'center' }}>
-            <h2 style={{ marginBottom: '20px' }}>Who's joining?</h2>
-            <form onSubmit={handleJoin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        <div className="app-header">
+          <h1>🎲 Game Night</h1>
+          <p>Live Voting App</p>
+        </div>
+        <div className="login-screen">
+          <div className="login-content">
+            <span className="login-icon">👋</span>
+            <h2>Welcome!</h2>
+            <p className="login-hint">Who is joining the party?</p>
+            <form onSubmit={handleJoin} className="login-form">
               <input 
-                className="glass-input"
+                className="login-input"
                 type="text" 
                 placeholder="Enter your name..." 
                 value={tempName}
                 onChange={(e) => setTempName(e.target.value)}
                 autoFocus
               />
-              <button type="submit" className="glass-btn-add" style={{ width: '100%' }}>
-                Join Party
-              </button>
+              <button type="submit" className="join-btn">Join Party</button>
             </form>
           </div>
         </div>
@@ -311,236 +319,189 @@ const GameNightApp = () => {
     );
   }
 
-  // MAIN APP VIEW
   return (
-    <div className="app-layout">
+    <div className="app-container">
       <Toaster position="top-center" />
       {showConfetti && <Confetti width={windowDimension.width} height={windowDimension.height} />}
-      
-      <div className="app-container">
-        
-        {/* 1. Header Section */}
-        <header className="glass-header">
-          <div className="title-row">
-            <span style={{ fontSize: '2.5rem' }}>🎲</span>
-            <h1>Game Night</h1>
-          </div>
-          <div className="date-wrapper">
-             <input 
-               type="date" 
-               className="date-picker-styled"
-               value={gameDate}
-               onChange={handleDateChange}
-             />
-          </div>
-        </header>
 
-        {/* 2. User Bar */}
-        <div className="user-bar">
-          <span style={{ fontSize: '1.1rem' }}>Hi, <strong>{user}</strong></span>
-          <button onClick={handleLogout} className="glass-btn-exit" style={{ 
-              background: 'rgba(255,255,255,0.1)', 
-              border: 'none', 
-              color: '#ccc', 
-              padding: '6px 12px', 
-              borderRadius: '8px', 
-              cursor: 'pointer',
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '6px'
-          }}>
-            <LogOut size={16} /> Exit
-          </button>
+      {/* Header */}
+      <div className="app-header">
+        <h1>🎲 Game Night</h1>
+        
+        <div className="date-picker-container" style={{ margin: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <CalendarIcon size={18} color="#fbbf24" />
+          <input 
+            type="date" 
+            value={gameDate} 
+            onChange={handleDateChange}
+            style={{ 
+              background: '#333', 
+              border: '1px solid #555', 
+              color: 'white', 
+              padding: '4px 8px', 
+              borderRadius: '4px' 
+            }} 
+          />
         </div>
 
-        {/* 3. Navigation Tabs */}
-        <nav className="nav-tabs">
-          <button className={`tab ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>🍕 Menu</button>
-          <button className={`tab ${activeTab === 'games' ? 'active' : ''}`} onClick={() => setActiveTab('games')}>🎮 Games</button>
-          <button className={`tab ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>💬 Chat</button>
-        </nav>
+        <div className="user-bar">
+          <p>Hi, <strong>{user}</strong></p>
+          <button onClick={handleLogout} className="logout-btn" title="Logout">
+            <LogOut size={16} />
+            <span>Exit</span>
+          </button>
+        </div>
+      </div>
 
-        {/* 4. Main Content Area */}
-        <main className="content-area">
-          {loading && <p style={{ textAlign: 'center', marginTop: '20px', color: '#888' }}>Loading...</p>}
+      {/* Tabs */}
+      <div className="tabs">
+        <button className={`tab-btn ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>🍕 Menu</button>
+        <button className={`tab-btn ${activeTab === 'games' ? 'active' : ''}`} onClick={() => setActiveTab('games')}>🎮 Games</button>
+        <button className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>💬 Chat</button>
+      </div>
 
-          {/* MENU & GAMES INPUTS */}
-          {!loading && activeTab !== 'chat' && (
-            <div className="action-bar">
-              <input
-                type="text"
-                className="glass-input"
-                placeholder={activeTab === 'menu' ? "Suggest food..." : "Suggest a game..."}
-                value={activeTab === 'menu' ? newMenuItem : newSuggestion}
-                onChange={(e) => activeTab === 'menu' ? setNewMenuItem(e.target.value) : setNewSuggestion(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (activeTab === 'menu' ? handleAddMenuItem() : handleAddSuggestion())}
-              />
-              
-              {activeTab === 'menu' && (
-                <select 
-                  className="glass-select"
-                  value={menuCategory}
-                  onChange={(e) => setMenuCategory(e.target.value)}
-                >
-                  <option value="Food">Food</option>
-                  <option value="Snack">Snack</option>
-                  <option value="Drink">Drink</option>
-                </select>
-              )}
+      {/* Content */}
+      <div className="content-area">
+        {loading && <p className="loading">Loading data...</p>}
 
-              <button 
-                onClick={activeTab === 'menu' ? handleAddMenuItem : handleAddSuggestion} 
-                className="glass-btn-add"
-              >
-                +
-              </button>
-            </div>
-          )}
-
-          {/* LISTS (MENU / GAMES) */}
+        {/* MENU VIEW */}
+        {!loading && activeTab === 'menu' && (
           <div className="list-container">
-            
-            {/* MENU LIST */}
-            {!loading && activeTab === 'menu' && (
-              <>
-                {menuItems.length === 0 && (
-                   <div className="empty-state">
-                      <p>No snacks yet. Feed the gremlins!</p>
-                      <button onClick={seedMenu} style={{ marginTop: '10px', background: 'transparent', border: '1px solid #555', color: '#aaa', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>Load Defaults</button>
-                   </div>
-                )}
-                {menuItems.map((item) => {
-                  const hasVoted = item.votedBy?.includes(user);
-                  return (
-                    <div key={item.id} className="glass-item">
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 'bold', fontSize: '1.05rem' }}>{item.name}</div>
-                        <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>{item.category} • {item.description}</div>
-                      </div>
-                      <button 
-                        className={`vote-pill ${hasVoted ? 'voted' : ''}`} 
-                        onClick={() => handleVote('menu', item.id, item.votedBy)}
-                        style={{ 
-                           background: hasVoted ? '#10b981' : 'rgba(255,255,255,0.1)', 
-                           border: 'none',
-                           color: 'white',
-                           padding: '6px 12px',
-                           borderRadius: '20px',
-                           cursor: 'pointer',
-                           fontWeight: 'bold',
-                           minWidth: '60px'
-                        }}
-                      >
-                         {hasVoted ? '✅' : '👍'} {item.votes}
-                      </button>
-                    </div>
-                  );
-                })}
-              </>
-            )}
-
-            {/* GAMES LIST */}
-            {!loading && activeTab === 'games' && (
-              <>
-                 {suggestions.length === 0 && <div className="empty-state"><p>No games suggested.</p></div>}
-                 {suggestions.map((game) => {
-                  const hasVoted = game.votedBy?.includes(user);
-                  return (
-                    <div key={game.id} className="glass-item">
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 'bold', fontSize: '1.05rem' }}>{game.title}</div>
-                        <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>Suggested by {game.suggestedBy}</div>
-                      </div>
-                      <button 
-                        className={`vote-pill ${hasVoted ? 'voted' : ''}`} 
-                        onClick={() => handleVote('games', game.id, game.votedBy)}
-                        style={{ 
-                           background: hasVoted ? '#10b981' : 'rgba(255,255,255,0.1)', 
-                           border: 'none',
-                           color: 'white',
-                           padding: '6px 12px',
-                           borderRadius: '20px',
-                           cursor: 'pointer',
-                           fontWeight: 'bold',
-                           minWidth: '60px'
-                        }}
-                      >
-                         {hasVoted ? '✅' : '👍'} {game.votes}
-                      </button>
-                    </div>
-                  );
-                })}
-              </>
-            )}
-
-            {/* CHAT LIST */}
-            {!loading && activeTab === 'chat' && (
-              <div className="chat-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '10px' }}>
-                   {messages.length === 0 && (
-                      <div className="empty-state">
-                        <MessageCircle size={32} style={{ marginBottom: '10px', opacity: 0.5 }} />
-                        <p>Start the chat!</p>
-                      </div>
-                   )}
-                   {messages.map((msg) => {
-                      const isMe = msg.sender === user;
-                      const isSystem = msg.sender === 'System';
-                      if (isSystem) return <div key={msg.id} style={{ textAlign: 'center', fontSize: '0.8rem', opacity: 0.6, margin: '10px 0' }}>{msg.text}</div>;
-                      
-                      return (
-                        <div key={msg.id} style={{ 
-                           display: 'flex', 
-                           justifyContent: isMe ? 'flex-end' : 'flex-start', 
-                           marginBottom: '8px' 
-                        }}>
-                           <div style={{ 
-                              background: isMe ? '#7c3aed' : 'rgba(255,255,255,0.1)', 
-                              padding: '8px 12px', 
-                              borderRadius: '12px', 
-                              borderBottomRightRadius: isMe ? '2px' : '12px',
-                              borderBottomLeftRadius: isMe ? '12px' : '2px',
-                              maxWidth: '75%'
-                           }}>
-                              {!isMe && <div style={{ fontSize: '0.7rem', opacity: 0.6, marginBottom: '2px' }}>{msg.sender}</div>}
-                              <div>{msg.text}</div>
-                           </div>
-                        </div>
-                      );
-                   })}
-                   <div ref={messagesEndRef} />
-                </div>
-                
-                <form onSubmit={handleSendMessage} className="action-bar" style={{ padding: '10px 0 0 0' }}>
-                   <input type="text" className="glass-input" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type message..." />
-                   <button type="submit" className="glass-btn-add"><Send size={18} /></button>
-                </form>
+            {/* STACKED FORM UI */}
+            <form onSubmit={handleAddMenuItem} className="input-group">
+              <input type="text" value={newMenuItem} onChange={(e) => setNewMenuItem(e.target.value)} placeholder="Suggest food..." />
+              <div className="input-row">
+                <select className="category-select" value={menuCategory} onChange={(e) => setMenuCategory(e.target.value)}>
+                  <option value="Food">Food</option>
+                  <option value="Drink">Drink</option>
+                  <option value="Snack">Snack</option>
+                </select>
+                <button type="submit" className="add-btn">
+                  <Plus size={18} /> Add
+                </button>
               </div>
+            </form>
+
+            <div className="vote-counter">
+              You have used <strong>{menuItems.filter(i => i.votedBy?.includes(user)).length} / 3</strong> votes.
+            </div>
+
+            {menuItems.map((item) => {
+              const hasVoted = item.votedBy?.includes(user);
+              return (
+                <div key={item.id} className="card menu-card">
+                  <div className="card-info">
+                    <h3>{item.name}</h3>
+                    <span className="badge">{item.category}</span>
+                    <p>{item.description}</p>
+                  </div>
+                  <button 
+                    className={`vote-btn ${hasVoted ? 'voted' : ''}`} 
+                    onClick={() => handleVote('menu', item.id, item.votedBy)}
+                  >
+                    {hasVoted ? '✅' : '👍'} {item.votes}
+                  </button>
+                </div>
+              );
+            })}
+            
+            {menuItems.length > 3 && (
+              <button className="runoff-btn" onClick={handleRunoff}>
+                <Swords size={18} /> Runoff (Top 3)
+              </button>
             )}
             
-            {/* Runoff Button (Only show if needed) */}
-            {!loading && activeTab !== 'chat' && (activeTab === 'menu' ? menuItems.length : suggestions.length) > 3 && (
-               <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                  <button onClick={handleRunoff} className="glass-btn-exit" style={{ 
-                      background: 'rgba(251, 191, 36, 0.2)', 
-                      color: '#fbbf24', 
-                      border: '1px solid rgba(251, 191, 36, 0.5)' 
-                  }}>
-                    <Swords size={16} style={{ marginRight: '5px' }} /> Runoff Vote (Top 3)
-                  </button>
-               </div>
-            )}
-
+            {menuItems.length === 0 && <button onClick={seedMenu} className="seed-btn">Load Default Menu</button>}
           </div>
-        </main>
+        )}
 
-        {/* 5. Admin Footer */}
-        <footer className="admin-footer">
-           <button onClick={handleResetNight} className="btn-danger-ghost">
-             💣 Reset Night
-           </button>
-           <div style={{ fontSize: '10px', marginTop: '5px', opacity: 0.3 }}>v1.2 (Glass)</div>
-        </footer>
+        {/* GAMES VIEW */}
+        {!loading && activeTab === 'games' && (
+          <div className="list-container">
+            <form onSubmit={handleAddSuggestion} className="input-group">
+              <input type="text" value={newSuggestion} onChange={(e) => setNewSuggestion(e.target.value)} placeholder="Suggest a game..." />
+              <button type="submit" className="add-btn">
+                <Plus size={18} /> Add
+              </button>
+            </form>
+
+            <div className="vote-counter">
+              You have used <strong>{suggestions.filter(i => i.votedBy?.includes(user)).length} / 3</strong> votes.
+            </div>
+
+            {suggestions.map((game) => {
+              const hasVoted = game.votedBy?.includes(user);
+              return (
+                <div key={game.id} className="card game-card">
+                  <div className="card-info">
+                    <span className="game-title">{game.title}</span>
+                    {game.suggestedBy && <p className="subtitle">By: {game.suggestedBy}</p>}
+                  </div>
+                  <button 
+                    className={`vote-btn ${hasVoted ? 'voted' : ''}`} 
+                    onClick={() => handleVote('games', game.id, game.votedBy)}
+                  >
+                    {hasVoted ? '✅' : '👍'} {game.votes}
+                  </button>
+                </div>
+              );
+            })}
+
+            {suggestions.length > 3 && (
+              <button className="runoff-btn" onClick={handleRunoff}>
+                <Swords size={18} /> Runoff (Top 3)
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* CHAT VIEW */}
+        {!loading && activeTab === 'chat' && (
+          <>
+            <div className="chat-container">
+              {messages.length === 0 && (
+                <div className="empty-chat">
+                  <MessageCircle size={48} />
+                  <p>No messages yet. Start the chat!</p>
+                </div>
+              )}
+              
+              {messages.map((msg) => {
+                const isMe = msg.sender === user;
+                const isSystem = msg.sender === 'System';
+                
+                if (isSystem) {
+                  return (
+                    <div key={msg.id} className="system-msg">
+                      {msg.text}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={msg.id} className={`message-bubble ${isMe ? 'message-mine' : 'message-other'}`}>
+                    {!isMe && <span className="message-sender">{msg.sender}</span>}
+                    {msg.text}
+                  </div>
+                );
+              })}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <form onSubmit={handleSendMessage} className="chat-input-area">
+              <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." />
+              <button type="submit" className="send-btn"><Send size={20} /></button>
+            </form>
+          </>
+        )}
+
+        {/* Footer */}
+        <div className="admin-zone">
+          <p>Admin Zone</p>
+          <button onClick={handleResetNight} className="nuke-btn">
+            💣 Reset Night
+          </button>
+        </div>
 
       </div>
     </div>
