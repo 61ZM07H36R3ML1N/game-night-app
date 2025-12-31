@@ -40,6 +40,14 @@ body {
   flex-direction: column;
 }
 
+.content-area {
+  flex: 1;               /* Grow to fill all remaining vertical space */
+  display: flex;         /* Enable flex layout for children */
+  flex-direction: column;
+  width: 100%;           /* Ensure full width */
+  position: relative;
+}
+
 /* HEADER */
 .app-header {
   text-align: center;
@@ -258,11 +266,13 @@ body {
 
 /* CHAT AREA */
 .chat-container {
-  height: calc(100vh - 250px);
-  overflow-y: auto;
+  flex: 1;               /* Fill all space between tabs and input bar */
+  height: auto;          /* Stop using fixed height */
+  overflow-y: auto;      /* Scroll internally if messages get long */
   padding: 16px;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .message-bubble {
@@ -296,6 +306,19 @@ body {
   font-size: 0.7rem;
   opacity: 0.7;
   margin-bottom: 2px;
+}
+
+.chat-input-area {
+  padding: 10px;
+  background: rgba(20, 20, 40, 0.9); /* Darker bg to stand out */
+  backdrop-filter: blur(10px);
+  display: flex;
+  gap: 10px;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  flex-shrink: 0;        /* Don't let this shrink */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* LOGIN SCREEN */
