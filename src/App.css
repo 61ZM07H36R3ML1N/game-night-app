@@ -266,14 +266,24 @@ body {
 }
 
 /* CHAT AREA */
-.chat-container {
-  flex: 1;               /* Fill all space between tabs and input bar */
-  height: auto;          /* Stop using fixed height */
-  overflow-y: auto;      /* Scroll internally if messages get long */
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
+.chat-input-area {
+  display: flex;             /* Enable Flexbox */
+  align-items: center;       /* Center items vertically */
+  flex-direction: row;       /* Force horizontal row */
+  flex-wrap: nowrap;         /* CRITICAL: Do not allow wrapping to new line */
+  gap: 12px;                 /* Space between input and button */
+  
+  /* Positioning */
+  position: sticky;
+  bottom: 0;
   width: 100%;
+  padding: 12px 16px;        /* Breathing room */
+  
+  /* Styling */
+  background: rgba(15, 12, 41, 0.95); /* Darker background so it's readable */
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 100;              /* Ensure it sits on top of messages */
 }
 
 .message-bubble {
@@ -310,36 +320,42 @@ body {
 }
 
 .chat-input-area input {
-  flex: 1;              /* Grow to fill ALL empty space */
-  min-width: 0;         /* prevent input from overflowing on small screens */
+  flex: 1;                   /* Grow to fill empty space */
+  min-width: 0;              /* Prevents it from forcing a wrap */
+  width: 100%;               /* Ensure it tries to fill */
+  
   padding: 12px 16px;
-  border-radius: 20px;
+  border-radius: 24px;       /* Pill shape */
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
   color: white;
-  font-size: 1rem;
+  font-size: 16px;           /* Prevents auto-zoom on iPhones */
   outline: none;
-  transition: border-color 0.2s;
 }
 
 .chat-input-area input:focus {
   border-color: #c084fc;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .send-btn {
-  background: linear-gradient(135deg, #c084fc, #db2777);
+  flex: 0 0 48px;            /* Rigid width: 48px. Don't grow, don't shrink. */
+  height: 48px;              /* Rigid height */
+  
+  border-radius: 50%;        /* Perfect circle */
   border: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  background: linear-gradient(135deg, #c084fc, #db2777);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   cursor: pointer;
-  flex-shrink: 0; /* Don't let the button get squished */
-  box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
+  box-shadow: 0 4px 12px rgba(219, 39, 119, 0.4);
+  transition: transform 0.1s;
+}
+
+.send-btn:active {
+  transform: scale(0.95);
 }
 
 /* LOGIN SCREEN */
