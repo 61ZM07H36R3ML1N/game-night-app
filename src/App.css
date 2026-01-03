@@ -288,6 +288,7 @@ body {
 
 .message-bubble {
   max-width: 80%;
+  width:fit-content;
   padding: 10px 14px;
   border-radius: 18px;
   margin-bottom: 10px;
